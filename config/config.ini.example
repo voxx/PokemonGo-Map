@@ -46,6 +46,11 @@
 #encrypt-lib:           # path to encrypt lib to be used instead of the shipped ones
 #status-page-password:  # enables and protects the /status page to view status of all workers
 
+# Account Manager API Settings
+#account-api-enabled: false                                      # Enable / Disabled Account Manager Api
+#account-api-key:		                                 # Account API Key
+#account-api-url: https://yourdomain.com/accounts/update         # Account API Url [ /{api_key}/{username}/{challenge_url} ]
+
 #Uncomment a line when you want to change its default value (Remove # at the beginning)
 #Please ensure to leave a space after the : (example setting: value)
 #username, password, location and gmaps-key are required
