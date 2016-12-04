@@ -78,6 +78,13 @@ def get_args():
     parser.add_argument('-enc', '--encounter',
                         help='Start an encounter to gather IVs and moves.',
                         action='store_true', default=False)
+    parser.add_argument('-aae', '--account-api-enabled',
+                        help='Enables Account Manager Api.',
+                        action='store_true', default=False)
+    parser.add_argument('-aak', '--account-api-key',
+                        help='Account Manager API key.')
+    parser.add_argument('-aau', '--account-api-url',
+                        help='Account Manager API url.')
     parser.add_argument('-cs', '--captcha-solving',
                         help='Enables captcha solving.',
                         action='store_true', default=False)

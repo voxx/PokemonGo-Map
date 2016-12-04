@@ -25,6 +25,7 @@ import time
 import geopy
 import geopy.distance
 import requests
+import urllib
 
 from datetime import datetime
 from threading import Thread
@@ -600,6 +601,23 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                 # Got the response, check for captcha, parse it out, then send todo's to db/wh queues.
                 try:
+		    # Account Manager Api Check
+                    if args.account_api_enabled:
+                        challenge_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
+                        if len(challenge_url) > 1:
+                            status['message'] = 'Account {} is encountering a captcha, attempting to notify the Account Manager API.'.format(account['username'])
+                            log.warning(status['message'])
+                            api_response = notify_account_api(args, status, account['username'], challenge_url)
+                            if 'ERROR' in api_response:
+                                log.warning('There was an error notifying the Account Manager API for account: {}. Putting user to sleep!'.format(account['username']))
+                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha'})
+                                break
+                            else:
+                                status['message'] = 'The Account Manager API has been notified of a pending captcha for account: {}. Putting user to sleep!'.format(account['username'])
+                                log.info(status['message'])
+                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha'})
+                                break
+
                     # Captcha check
                     if args.captcha_solving:
                         captcha_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
@@ -817,6 +835,20 @@ def token_request(args, status, url):
     token = str(recaptcha_response.split('|')[1])
     return token
 
+def notify_account_api(args, status, username, challenge_url):
+    s = requests.Session()
+    # Send the captcha challenge details to accounts api.
+    try:
+        api_response	= s.get("{}/{}/{}?url={}".format(args.account_api_url, args.account_api_key, username, urllib.quote(challenge_url,safe='')))
+        response_code	= api_response.status_code
+        response_text	= api_response.text
+    # status 401 / 404 implies that the retuned response was an error.
+    except Exception as e:
+        log.warning('Exception while notifying Account Manager API: %s', e)
+        return 'ERROR'
+    status['message'] = 'Successfully notified Account Manager API of pending captcha for account: {}.'.format(username)
+    log.info(status['message'])
+    return response_text
 
 def calc_distance(pos1, pos2):
     R = 6378.1  # KM radius of the earth
