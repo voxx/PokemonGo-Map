@@ -637,7 +637,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 status['message'] = 'The Account Manager API has been notified of a pending captcha for account: {}. Putting user to sleep!'.format(account['username'])
                                 log.info(status['message'])
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
-				parsed['bad_scan'] = true
+				parsed['bad_scan'] = True
 				scheduler.task_done(status, parsed)
                                 break
 
