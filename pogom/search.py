@@ -637,7 +637,13 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 status['message'] = 'The Account Manager API has been notified of a pending captcha for account: {}. Putting user to sleep!'.format(account['username'])
                                 log.info(status['message'])
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
-				parsed['bad_scan'] = True
+				# Probably a better way to do this, but build "bad_scan" parse object, and pass to task_done handler to re-queue scan location
+				parsed = {
+            			    'count': 0,
+            			    'gyms': [],
+            			    'spawn_points': [],
+            			    'bad_scan': True
+				}
 				scheduler.task_done(status, parsed)
                                 break
 
