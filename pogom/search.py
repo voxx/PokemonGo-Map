@@ -626,33 +626,28 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                     if args.account_api_enabled:
                         challenge_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
                         if len(challenge_url) > 1:
+                            status['noitems'] += 1
+                            consecutive_noitems += 1
+                            parsed = {
+                                'count': 0,
+                                'gyms': [],
+                                'spawn_points': step_location,
+                                'bad_scan': True
+                            }
                             status['message'] = 'Account {} encountered a captcha. '.format(account['username'])
-                            
 			    api_response = notify_account_api(args, status, account['username'], challenge_url)
-			    time.sleep(1) # pause to allow time for api to respond before proceeding
-
 			    if 'success' in api_response:
 				status['message'] += 'The Account Manager API was successfully notified.'
-				continue
+                                log.warning(status['message'])
+                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
+                                scheduler.task_done(status, parsed)
+                                break # exit this loop to get a new account and have the API recreated
                             else:
                                 status['message'] += 'The Account Manager API notification failed.'
-				continue
-
-			    parsed = {
-				'count': 0,
-				'gyms': [],
-				'spawn_points': step_location,
-				'bad_scan': True
-			    }
-			    status['noitems'] += 1
-			    consecutive_noitems += 1
-
-			    log.warning(status['message'])
-
-			    account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
-			    scheduler.task_done(status, parsed)
-
-			    break # exit this loop to get a new account and have the API recreated
+                                log.warning(status['message'])
+			        account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
+			        scheduler.task_done(status, parsed)
+			        break # exit this loop to get a new account and have the API recreated
 
                     # Captcha check
                     if args.captcha_solving:
