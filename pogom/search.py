@@ -646,7 +646,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
             			    'spawn_points': step_location,
             			    'bad_scan': True
 				}
-				status['fail'] += 1
+				status['noitems'] += 1
 				scheduler.task_done(status, parsed)
                                 break
 
