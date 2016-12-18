@@ -648,9 +648,10 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 			    consecutive_noitems += 1
 
 			    log.warning(status['message'])
-			    scheduler.task_done(status, parsed)
 
 			    account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
+			    scheduler.task_done(status, parsed)
+
 			    break # exit this loop to get a new account and have the API recreated
 
                     # Captcha check
