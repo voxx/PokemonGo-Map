@@ -879,11 +879,10 @@ def notify_account_api(args, status, username, challenge_url):
         response_text	= str(api_response.text)
     # status 401 = unauthorized api request / 404 user not found
     except Exception as e:
-	#status['message'] = 'Exception occurred while notifying Account Manager API: {}'.format(e)
-	#log.exception(status['message'])
+	status['message'] = '{} Exception occurred while notifying Account Manager API: {}'.format(response_code, e)
+	log.exception(status['message'])
         return 'ERROR'
-    #status['message'] = 'Successfully notified Account Manager API of pending captcha for account: {}.'.format(username)
-    #log.info(status['message'])
+
     return response_text
 
 def calc_distance(pos1, pos2):
