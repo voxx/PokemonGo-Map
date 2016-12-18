@@ -622,28 +622,30 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                 # Got the response, check for captcha, parse it out, then send todo's to db/wh queues.
                 try:
-		    # Account Manager Api Check
+		    # Account Manager Api Hook
                     if args.account_api_enabled:
                         challenge_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
                         if len(challenge_url) > 1:
-                            status['message'] = 'Account {} is encountered a captcha, attempting to notify the Account Manager API.'.format(account['username'])
+                            status['message'] = 'Account {} has encountered a captcha. Attempting to notify the Account Manager API.'.format(account['username'])
                             log.warning(status['message'])
                             api_response = notify_account_api(args, status, account['username'], challenge_url)
                             if 'ERROR' in api_response:
-                                log.warning('There was an error notifying the Account Manager API for account: {}. Putting user to sleep!'.format(account['username']))
+				status['message'] = 'There was an error notifying the Account Manager API for account: {}. Putting user to sleep!'.format(account['username'])
+				log.warning(status['message'])
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
                                 break
                             else:
-                                status['message'] = 'The Account Manager API has been notified of a pending captcha for account: {}. Putting user to sleep!'.format(account['username'])
-                                log.info(status['message'])
+                                status['message'] = 'The Account Manager API was notified of captcha for account: {}. Putting user to sleep!'.format(account['username'])
+                                log.warning(status['message'])
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
-				# Probably a better way to do this, but build "bad_scan" parse object, and pass to task_done handler to re-queue scan location
+				# Probably a better way to do this, but let's build a "bad_scan" parsed response object and pass it to task_done handler to re-queue scan location
 				parsed = {
             			    'count': 0,
             			    'gyms': [],
-            			    'spawn_points': [],
+            			    'spawn_points': step_location,
             			    'bad_scan': True
 				}
+				status['fail'] += 1
 				scheduler.task_done(status, parsed)
                                 break
 
