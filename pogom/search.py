@@ -632,10 +632,10 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 			    time.sleep(1) # pause to allow time for api to respond before proceeding
 
 			    if 'success' in api_response:
-				status['message'] += 'The Account Manager API was successfully notified.')
+				status['message'] += 'The Account Manager API was successfully notified.'
 				continue
                             else:
-                                status['message'] += 'The Account Manager API notification failed.')
+                                status['message'] += 'The Account Manager API notification failed.'
 				continue
 
 			    parsed = {
