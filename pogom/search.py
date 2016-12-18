@@ -628,27 +628,31 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                         if len(challenge_url) > 1:
                             status['message'] = 'Account {} encountered a captcha. Attempting to notify the Account Manager API.'.format(account['username'])
                             log.warning(status['message'])
-                            api_response = notify_account_api(args, status, account['username'], challenge_url)
+                            
+			    api_response = notify_account_api(args, status, account['username'], challenge_url)
 			    time.sleep(1) # pause to allow time for api to respond before proceeding
-                            if 'ERROR' in api_response:
+                            
+			    if 'ERROR' in api_response:
 				status['message'] = 'Error notifying the Account Manager API of captcha for account: {}. Putting user to sleep!'.format(account['username'])
 				log.error(status['message'])
-                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
-                                break
+                                #account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
+                                #break
                             else:
                                 status['message'] = 'The Account Manager API was notified of captcha for account: {}. Putting user to sleep!'.format(account['username'])
                                 log.info(status['message'])
 				# Probably a better way to do this, but let's build a "bad_scan" parsed response object and pass it to task_done handler to re-queue scan location
-				parsed = {
-            			    'count': 0,
-            			    'gyms': [],
-            			    'spawn_points': step_location,
-            			    'bad_scan': True
-				}
-				status['noitems'] += 1
-				scheduler.task_done(status, parsed)
-				account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
-                                break
+				#parsed = {
+            			#    'count': 0,
+            			#    'gyms': [],
+            			#    'spawn_points': step_location,
+            			#    'bad_scan': True
+				#}
+				#status['noitems'] += 1
+				#scheduler.task_done(status, parsed)
+				#account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
+                                #break
+
+			    account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
 
                     # Captcha check
                     if args.captcha_solving:
