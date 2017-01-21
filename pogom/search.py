@@ -525,8 +525,8 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                 if (args.max_failures > 0) and (consecutive_fails >= args.max_failures):
                     # Account Manager Api Hook
                     if args.account_api_enabled:
-                        banned = true
-                        captcha_url = false
+                        banned = True
+                        captcha_url = False
                         api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
                         if 'success' in api_response:
                             status['message'] = 'Account {} failed {} or more scans and appears to be banned. The Account Manager API was successfully notified.'.format(account['username'], args.max_failures)
@@ -539,7 +539,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                             status['message'] = 'Account {} failed {} or more scans and appears to be banned. The Account Manager API notification failed.'.format(account['username'], args.max_failures)
                             log.error(status['message'])
                             time.sleep(5)
-                            account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})			    
+                            account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})
                             scheduler.task_done(status, parsed)
                             break # exit this loop to get a new account and have the API recreated
 
@@ -654,7 +654,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 'spawn_points': step_location,
                                 'bad_scan': True
                             }
-                            banned = false
+                            banned = False
                             api_response = notify_account_api(args, status, account['username'], challenge_url, banned)
                             if 'success' in api_response:
                                 status['message'] = 'Account {} encountered a captcha. The Account Manager API was successfully notified.'.format(account['username'])
