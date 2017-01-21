@@ -523,6 +523,26 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                 # If this account has been messing up too hard, let it rest.
                 if (args.max_failures > 0) and (consecutive_fails >= args.max_failures):
+                    # Account Manager Api Hook
+                    if args.account_api_enabled:
+                        banned = true
+                        captcha_url = false
+                        api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
+                        if 'success' in api_response:
+                            status['message'] = 'Account {} failed {} or more scans and appears to be banned. The Account Manager API was successfully notified.'.format(account['username'], args.max_failures)
+                            log.warning(status['message'])
+                            time.sleep(5)
+                            account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})
+                            scheduler.task_done(status, parsed)
+                            break # exit this loop to get a new account and have the API recreated
+                        else:
+                            status['message'] = 'Account {} failed {} or more scans and appears to be banned. The Account Manager API notification failed.'.format(account['username'], args.max_failures)
+                            log.error(status['message'])
+                            time.sleep(5)
+                            account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})			    
+                            scheduler.task_done(status, parsed)
+                            break # exit this loop to get a new account and have the API recreated
+
                     status['message'] = 'Account {} failed more than {} scans; possibly bad account. Switching accounts...'.format(account['username'], args.max_failures)
                     log.warning(status['message'])
                     account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'failures'})
@@ -622,7 +642,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                 # Got the response, check for captcha, parse it out, then send todo's to db/wh queues.
                 try:
-		    # Account Manager Api Hook
+                    # Account Manager Api Hook
                     if args.account_api_enabled:
                         challenge_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
                         if len(challenge_url) > 1:
@@ -634,21 +654,22 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 'spawn_points': step_location,
                                 'bad_scan': True
                             }
-			    api_response = notify_account_api(args, status, account['username'], challenge_url)
-			    if 'success' in api_response:
-                            	status['message'] = 'Account {} encountered a captcha. The Account Manager API was successfully notified.'.format(account['username'])
+                            banned = false
+                            api_response = notify_account_api(args, status, account['username'], challenge_url, banned)
+                            if 'success' in api_response:
+                                status['message'] = 'Account {} encountered a captcha. The Account Manager API was successfully notified.'.format(account['username'])
                                 log.warning(status['message'])
-				time.sleep(5)
+                                time.sleep(5)
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
                                 scheduler.task_done(status, parsed)
                                 break # exit this loop to get a new account and have the API recreated
                             else:
-				status['message'] = 'Account {} encountered a captcha. The Account Manager API notification failed.'.format(account['username'])
+                                status['message'] = 'Account {} encountered a captcha. The Account Manager API notification failed.'.format(account['username'])
                                 log.error(status['message'])
-				time.sleep(5)
-			        account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
-			        scheduler.task_done(status, parsed)
-			        break # exit this loop to get a new account and have the API recreated
+                                time.sleep(5)
+                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
+                                scheduler.task_done(status, parsed)
+                                break # exit this loop to get a new account and have the API recreated
 
                     # Captcha check
                     if args.captcha_solving:
@@ -869,17 +890,17 @@ def token_request(args, status, url):
     token = str(recaptcha_response.split('|')[1])
     return token
 
-def notify_account_api(args, status, username, challenge_url):
+def notify_account_api(args, status, username, challenge_url, banned):
     s = requests.Session()
-    # Send the captcha challenge details to accounts api.
+    # Send the captcha challenge or banned account status details to accounts api.
     try:
-        api_response	= s.get("{}/{}/{}?url={}".format(args.account_api_url, args.account_api_key, username, urllib.quote(challenge_url,safe='')))
+        api_response	= s.get("{}/{}/{}?url={}&banned={}".format(args.account_api_url, args.account_api_key, username, urllib.quote(challenge_url,safe=''), banned))
         response_code	= api_response.status_code
         response_text	= str(api_response.text)
     # status 401 = unauthorized api request / 404 user not found
     except Exception as e:
-	status['message'] = '{} Exception occurred while notifying Account Manager API: {}'.format(response_code, e)
-	log.exception(status['message'])
+        status['message'] = '{} Exception occurred while notifying Account Manager API: {}'.format(response_code, e)
+        log.exception(status['message'])
         return 'ERROR'
 
     return response_text
