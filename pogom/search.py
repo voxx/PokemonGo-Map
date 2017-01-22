@@ -849,7 +849,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 'bad_scan': True
                             }
                             banned = False
-                            api_response = notify_account_api(args, status, account['username'], challenge_url, banned)
+                            api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
                             if 'success' in api_response:
                                 status['message'] = 'Account {} encountered a captcha. The Account Manager API was successfully notified.'.format(account['username'])
                                 log.warning(status['message'])
