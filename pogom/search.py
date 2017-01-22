@@ -673,14 +673,14 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                         captcha_url = False
                         api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
                         if 'success' in api_response:
-                            status['message'] = 'Account {} failed {} or more scans and appears to be banned. The Account Manager API was successfully notified.'.format(account['username'], args.max_failures)
+                            status['message'] = 'Account {} failed more than {} scans in a row, it\'s probably banned. The Account Manager API was successfully notified.'.format(account['username'], args.max_failures)
                             log.warning(status['message'])
                             time.sleep(5)
                             account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})
                             scheduler.task_done(status, parsed)
                             break # exit this loop to get a new account and have the API recreated
                         else:
-                            status['message'] = 'Account {} failed {} or more scans and appears to be banned. The Account Manager API notification failed.'.format(account['username'], args.max_failures)
+                            status['message'] = 'Account {} failed more than {} scans in a row, it\'s probably banned. The Account Manager API notification failed.'.format(account['username'], args.max_failures)
                             log.error(status['message'])
                             time.sleep(5)
                             account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})
@@ -840,8 +840,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                         
                         # Account Manager Api Hook
                         if args.account_api_enabled:
-                            status['noitems'] += 1
-                            consecutive_noitems += 1
+                            # Building empty parsed object
                             parsed = {
                                 'count': 0,
                                 'gyms': [],
@@ -853,14 +852,14 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                             if 'success' in api_response:
                                 status['message'] = 'Account {} encountered a captcha. The Account Manager API was successfully notified.'.format(account['username'])
                                 log.warning(status['message'])
-                                time.sleep(5)
+                                time.sleep(5) # Force sleep to ensure /status update
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
                                 scheduler.task_done(status, parsed)
                                 break # exit this loop to get a new account and have the API recreated
                             else:
                                 status['message'] = 'Account {} encountered a captcha. The Account Manager API notification failed.'.format(account['username'])
                                 log.error(status['message'])
-                                time.sleep(5)
+                                time.sleep(5) # Force sleep to ensure /status update
                                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
                                 scheduler.task_done(status, parsed)
                                 break # exit this loop to get a new account and have the API recreated
