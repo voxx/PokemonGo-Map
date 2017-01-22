@@ -797,11 +797,11 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                         tutorial_state = get_tutorial_state(api)
 
                         if not all(x in tutorial_state for x in (0, 1, 3, 4, 7)):
-                            log.info(
+                            log.debug(
                                 'Completing tutorial steps for %s.', account['username'])
                             complete_tutorial(api, account, tutorial_state)
                         else:
-                            log.info(
+                            log.debug(
                                 'Account %s has completed tutorial.', account['username'])
 
                 # Putting this message after the check_login so the messages
