@@ -722,5 +722,5 @@ def complete_tutorial(api, account, tutorial_state):
         time.sleep(random.uniform(0.8, 1.8))
 
     # Sleeping before we start scanning to avoid Niantic throttling.
-    time.sleep(random.uniform(5, 10))
+    time.sleep(random.uniform(7, 12))
     return True
