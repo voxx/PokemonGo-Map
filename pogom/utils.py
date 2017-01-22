@@ -607,7 +607,7 @@ class Timer():
 def get_tutorial_state(api):
     request = api.create_request()
     request.get_player(
-        player_locale={'country': 'US', 'language': 'en', 'timezone': 'America/Denver'})
+        player_locale={'country': 'US', 'language': 'en', 'timezone': 'America/Los_Angeles'})
 
     response = request.call().get('responses', {})
 
@@ -678,7 +678,7 @@ def complete_tutorial(api, account, tutorial_state):
             player_locale={
                 'country': 'US',
                 'language': 'en',
-                'timezone': 'America/Denver'})
+                'timezone': 'America/Los_Angeles'})
         responses = request.call().get('responses', {})
 
         inventory = responses.get('GET_INVENTORY', {}).get(
@@ -705,7 +705,7 @@ def complete_tutorial(api, account, tutorial_state):
             player_locale={
                 'country': 'US',
                 'language': 'en',
-                'timezone': 'America/Denver'})
+                'timezone': 'America/Los_Angeles'})
         request.call()
 
     if 7 not in tutorial_state:
