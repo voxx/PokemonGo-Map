@@ -27,11 +27,8 @@ import time
 import geopy
 import geopy.distance
 import requests
-<<<<<<< HEAD
-import urllib
-=======
 import copy
->>>>>>> upstream/develop
+import urllib
 
 from datetime import datetime
 from threading import Thread
@@ -670,7 +667,6 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                 # If this account has been messing up too hard, let it rest.
                 if (args.max_failures > 0) and (consecutive_fails >= args.max_failures):
-<<<<<<< HEAD
                     # Account Manager Api Hook
                     if args.account_api_enabled:
                         banned = True
@@ -691,11 +687,8 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                             scheduler.task_done(status, parsed)
                             break # exit this loop to get a new account and have the API recreated
 
-                    status['message'] = 'Account {} failed more than {} scans; possibly bad account. Switching accounts...'.format(account['username'], args.max_failures)
-=======
                     status['message'] = 'Account {} failed more than {} scans; possibly bad account. Switching accounts...'.format(
                         account['username'], args.max_failures)
->>>>>>> upstream/develop
                     log.warning(status['message'])
                     account_failures.append(
                         {'account': account, 'last_fail_time': now(), 'reason': 'failures'})
@@ -839,11 +832,14 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                 # Got the response, check for captcha, parse it out, then send
                 # todo's to db/wh queues.
                 try:
-<<<<<<< HEAD
-                    # Account Manager Api Hook
-                    if args.account_api_enabled:
-                        challenge_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
-                        if len(challenge_url) > 1:
+                    # Captcha check.
+                    captcha_url = response_dict['responses'][
+                        'CHECK_CHALLENGE']['challenge_url']
+                    if len(captcha_url) > 1:
+                        status['captcha'] += 1
+                        
+                        # Account Manager Api Hook
+                        if args.account_api_enabled:
                             status['noitems'] += 1
                             consecutive_noitems += 1
                             parsed = {
@@ -869,21 +865,10 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 scheduler.task_done(status, parsed)
                                 break # exit this loop to get a new account and have the API recreated
 
-                    # Captcha check
-                    if args.captcha_solving:
-                        captcha_url = response_dict['responses']['CHECK_CHALLENGE']['challenge_url']
-                        if len(captcha_url) > 1:
-                            status['message'] = 'Account {} is encountering a captcha, starting 2captcha sequence.'.format(account['username'])
-=======
-                    # Captcha check.
-                    captcha_url = response_dict['responses'][
-                        'CHECK_CHALLENGE']['challenge_url']
-                    if len(captcha_url) > 1:
-                        status['captcha'] += 1
+                        # 2CAPTCHA Api Hook
                         if args.captcha_solving:
                             status['message'] = 'Account {} is encountering a captcha, starting 2captcha sequence.'.format(account[
                                                                                                                            'username'])
->>>>>>> upstream/develop
                             log.warning(status['message'])
                             captcha_token = token_request(
                                 args, status, captcha_url)
