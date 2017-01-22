@@ -629,7 +629,6 @@ def complete_tutorial(api, account, tutorial_state):
         request.call()
 
     if 1 not in tutorial_state:
-        log.debug('Starting Tutorial 1 for {}'.format(account['username']))
         time.sleep(random.uniform(5, 12))
         request = api.create_request()
         request.set_avatar(player_avatar={
@@ -656,7 +655,6 @@ def complete_tutorial(api, account, tutorial_state):
 
     starter_id = None
     if 3 not in tutorial_state:
-        log.debug('Starting Tutorial 3 for {}'.format(account['username']))
         time.sleep(random.uniform(1, 1.5))
         request = api.create_request()
         request.get_download_urls(asset_id=['1a3c2816-65fa-4b97-90eb-0b301c064b7a/1477084786906000',
@@ -691,7 +689,6 @@ def complete_tutorial(api, account, tutorial_state):
                 starter_id = pokemon.get('id')
 
     if 4 not in tutorial_state:
-        log.debug('Starting Tutorial 4 for {}'.format(account['username']))
         time.sleep(random.uniform(5, 12))
         request = api.create_request()
         request.claim_codename(codename=account['username'])
@@ -712,14 +709,12 @@ def complete_tutorial(api, account, tutorial_state):
         request.call()
 
     if 7 not in tutorial_state:
-        log.debug('Starting Tutorial 7 for {}'.format(account['username']))
         time.sleep(random.uniform(4, 10))
         request = api.create_request()
         request.mark_tutorial_complete(tutorials_completed=7)
         request.call()
 
     if starter_id:
-        log.debug('Attempting to set Buddy Pokemon for {}'.format(account['username']))
         time.sleep(random.uniform(3, 5))
         request = api.create_request()
         request.set_buddy_pokemon(pokemon_id=starter_id)
