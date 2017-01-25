@@ -7,6 +7,7 @@
 *.json
 config/*
 !config/config.ini.example
+!config/config.tutorial.example
 static/dist/
 node_modules/
 venv/

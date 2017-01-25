@@ -31,6 +31,20 @@ from .transform import transform_from_wgs_to_gcj, get_new_coords
 from .customLog import printPokemon
 log = logging.getLogger(__name__)
 
+## START FORT ITEMS
+#ITEM_POKEBALL = 1
+#ITEM_GREATBALL = 2
+#ITEM_ULTRABALL = 3
+#ITEM_RAZZBERRY = 701
+#ITEM_POTION = 101
+#ITEM_SUPER_POTION = 102
+#ITEM_HYPER_POTION = 103
+#ITEM_MAX_POTION = 104
+#ITEM_REVIVE = 201
+#ITEM_MAX_REVIVE = 202
+#POTIONS = [101, 102, 103, 104, 201, 202]
+## END FOR ITEMS
+
 args = get_args()
 flaskDb = FlaskDB()
 cache = TTLCache(maxsize=100, ttl=60 * 5)
@@ -1807,6 +1821,53 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
         for f in forts:
             if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops.
+                if args.complete_tutorial:
+                    distance = 0.04
+                    if in_radius((f['latitude'], f['longitude']), step_location, distance):
+                        spin_result = None
+                        req = api.create_request()
+                        log.warning('Pokestop ID: %s', f['id'])
+                        while spin_result is None:
+                            spin_response = req.fort_search(fort_id=f['id'],
+                                                            fort_latitude=f['latitude'],
+                                                            fort_longitude=f['longitude'],
+                                                            player_latitude=step_location[0],
+                                                            player_longitude=step_location[1]
+                                                            )
+                            spin_response = req.check_challenge()
+                            spin_response = req.get_hatched_eggs()
+                            spin_response = req.get_inventory()
+                            spin_response = req.check_awarded_badges()
+                            spin_response = req.download_settings()
+                            spin_response = req.get_buddy_walked()
+                            time.sleep(10)
+                            spin_response = req.call()
+                            # Need to add Account Manager Logic here and username to pass to api
+                            captcha_url = spin_response['responses']['CHECK_CHALLENGE']['challenge_url']
+                            if len(captcha_url) > 1:
+                                log.info('Account encountered a captcha!')
+                                return
+
+                            # Need to add logic to mark tutorial 8 complete
+                            if spin_response['responses']['FORT_SEARCH']['result'] is 1:
+                                log.info('Pokestop - Spin was successful.')
+                                spin_result = 1
+                            elif spin_response['responses']['FORT_SEARCH']['result'] is 2:
+                                log.info('Pokestop - Spin failed - Stop is out of range.')
+                                spin_result = 'Failed'
+                            elif spin_response['responses']['FORT_SEARCH']['result'] is 3:
+                                log.info('Pokestop - Spin failed - Stop is cooling down.')
+                                spin_result = 'Failed'
+                            elif spin_response['responses']['FORT_SEARCH']['result'] is 4:
+                                log.info('Pokestop - Spin failed - Inventory is full.')
+                                spin_result = 'Failed'
+                            elif spin_response['responses']['FORT_SEARCH']['result'] is 5:
+                                log.info('Pokestop - Spin failed - Daily spin limit exceeded?')
+                                spin_result = 'Failed'
+                            else:
+                                log.info('Pokestop - Spin failed - No response resulted in error.')
+                                spin_result = 'Failed'
+
                 if 'active_fort_modifier' in f:
                     lure_expiration = (datetime.utcfromtimestamp(
                         f['last_modified_timestamp_ms'] / 1000.0) +

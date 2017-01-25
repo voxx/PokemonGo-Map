@@ -1,0 +1,69 @@
+# DO NOT USE NOTEPAD TO EDIT CONFIG FILES!! USE NOTEPAD ++ INSTEAD.
+# Authentication settings
+#auth-service:          # ptc (default) or google
+#username:
+#password:
+
+# Database settings
+#db-type: sqlite        # sqlite (default) or mysql
+#db-host:               # required for mysql
+#db-name:               # required for mysql
+#db-user:               # required for mysql
+#db-pass:               # required for mysql
+#db-port:               # default 3306
+
+# Search settings
+#location:		# Set this location next to a known Pokestop
+speed-scan              # To use speed-scan as the search scheduler
+no-gyms: true           # disables gym scanning (default false)
+no-pokemon: true        # disables pokemon scanning (default false)
+#no-pokestops:          # disables pokestop scanning (default false)
+scan-delay: 15          # default 10
+step-limit: 1           # default 12
+#gym-info:              # enables detailed gym info collection (default false)
+max-failures: 5         # Maximum number of failures to parse locations before an account will go into a sleep for #account-rest-interval seconds (0 to disable), (default 5)
+max-empty: 5            # Maximum number of empty scans before an account will go into a sleep for #account-rest-interval seconds. Reasonable to use with proxies (0 to disable), (default 0)
+#min-seconds-left:      # time that must be left on a spawn before considering it too late and skipping it (default 0)
+status-name: Tutorial	# enables writing status updates to the database - if you use multiple processes, each needs a unique value
+
+# Pokemon IV
+#encounter:             # Set to true to start encounters to pull more info, like IVs or movesets. (default false)
+#encounter-delay:       # delay in seconds before starting an encounter. Must not be zero. (default 1)
+#encounter-whitelist:   # whitelist of pokemon ids to encounter. Syntax [id,id,id,id] (Do not use with blacklist)
+#encounter-blacklist:   # blacklist of pokemon ids to NOT encounter. Syntax [id,id,id,id] (Do not use with whitelist)
+
+# Misc
+#gmaps-key:             # Your Google Maps API key
+#proxy:                 # Proxy URL e.g. socks5://127.0.0.1:9050 or a list of proxies e.g. [socks5://127.0.0.1:9050,socks5://127.0.0.1:9050]
+#proxy-timeout:         # Timeout before proceeding with next proxy while checking if the proxy works, (default 5)
+#proxy-display:         # Used with -ps, full = display complete proxy address. Index = displays just the index for that proxy (default index)
+#proxy-file:            # Load proxy list from text file (one proxy per line), overrides #proxy
+#proxy-refresh:         # Period of proxy file reloading, in seconds. Works only with #proxy-file (0 to disable), (default 0)
+#proxy-rotation:        # Enable proxy rotation with account changing for search threads (none/round/random), (default='none')
+#webhook:               # Webhook URL e.g. http://127.0.0.1:12345 or a list for multiple webhooks [http://127.0.0.1:1345,http://127.0.0.1:12346]
+#webhook-updates-only:  # Only send updates to webhooks (excludes gyms & non-lured pokéstops).
+#wh-retries:            # Number of times to retry sending webhook data on failure (default: 5).
+#wh-timeout:            # Timeout (in seconds) for webhook requests (default: 2).
+#wh-backoff-factor:     # Factor (in seconds) by which the delay until next retry will increase (default: 0.25).
+#wh-lfu-size:           # Webhook LFU cache max size (default: 1000).
+
+# Webserver settings
+#host:                  # address to listen on (default 127.0.0.1)
+#port:                  # port to listen on (default 5000)
+#locale:                # pokemon translation
+#ssl-certificate:       # path to ssl certificate
+#ssl-privatekey:        # path to ssl private key
+#encrypt-lib:           # path to encrypt lib to be used instead of the shipped ones
+#status-page-password:  # enables and protects the /status page to view status of all workers
+
+# Misc
+no-server: true			# There is no need for a server when only completing tutorial
+login-delay: 30			# Login delay between accounts to complete tutorial, RPM is high on tut
+account-search-interval: 90	# Let the tutorial complete, spin a Pokestop and go to sleep
+account-rest-inteval: 3600	# Tutorial should be completed after account-search-interval, rest until all accounts are done
+complete-tutorial: true		# Complete tutorial steps for accounts.
+workers: 5			# Number of workers to complete tutorial on at a time
+
+# Uncomment a line when you want to change its default value (Remove # at the beginning)
+# Please ensure to leave a space after the colon (:) (example setting: value)
+# Username, password, location and gmaps-key are required
