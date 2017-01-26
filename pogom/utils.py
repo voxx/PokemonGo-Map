@@ -771,7 +771,7 @@ def complete_tutorial(api, account, tutorial_state):
         time.sleep(random.uniform(1, 5))
         request = api.create_request()
         request.mark_tutorial_complete(tutorials_completed=0)
-        log.info('Sending 0 tutorials_completed for %s.', account['username'])
+        log.debug('Sending 0 tutorials_completed for %s.', account['username'])
         request.call()
 
     if 1 not in tutorial_state:
@@ -794,7 +794,7 @@ def complete_tutorial(api, account, tutorial_state):
 
         request = api.create_request()
         request.mark_tutorial_complete(tutorials_completed=1)
-        log.info('Sending 1 tutorials_completed for %s.', account['username'])
+        log.debug('Sending 1 tutorials_completed for %s.', account['username'])
         request.call()
 
     time.sleep(random.uniform(0.5, 0.6))
@@ -840,7 +840,6 @@ def complete_tutorial(api, account, tutorial_state):
             pokemon = item.get('inventory_item_data', {}).get('pokemon_data')
             if pokemon:
                 starter_id = pokemon.get('id')
-                log.info('Successfully caught the starter for %s.', account['username'])
 
     if 4 not in tutorial_state:
         time.sleep(random.uniform(5, 12))
@@ -852,7 +851,7 @@ def complete_tutorial(api, account, tutorial_state):
         time.sleep(random.uniform(1, 1.3))
         request = api.create_request()
         request.mark_tutorial_complete(tutorials_completed=4)
-        log.info('Sending 4 tutorials_completed for %s.', account['username'])
+        log.debug('Sending 4 tutorials_completed for %s.', account['username'])
         request.call()
 
         time.sleep(0.1)
@@ -868,14 +867,14 @@ def complete_tutorial(api, account, tutorial_state):
         time.sleep(random.uniform(4, 10))
         request = api.create_request()
         request.mark_tutorial_complete(tutorials_completed=7)
-        log.info('Sending 7 tutorials_completed for %s.', account['username'])
+        log.debug('Sending 7 tutorials_completed for %s.', account['username'])
         request.call()
 
     if starter_id:
         time.sleep(random.uniform(3, 5))
         request = api.create_request()
         request.set_buddy_pokemon(pokemon_id=starter_id)
-        log.info('Setting buddy pokemon for %s.', account['username'])
+        log.debug('Setting buddy pokemon for %s.', account['username'])
         request.call()
         time.sleep(random.uniform(0.8, 1.8))
 

@@ -1826,7 +1826,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     if in_radius((f['latitude'], f['longitude']), step_location, distance):
                         spin_result = None
                         req = api.create_request()
-                        log.warning('Pokestop ID: %s', f['id'])
+                        log.info('Pokestop ID: %s', f['id'])
                         while spin_result is None:
                             spin_response = req.fort_search(fort_id=f['id'],
                                                             fort_latitude=f['latitude'],
@@ -1853,19 +1853,19 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                 log.info('Pokestop - Spin was successful.')
                                 spin_result = 1
                             elif spin_response['responses']['FORT_SEARCH']['result'] is 2:
-                                log.info('Pokestop - Spin failed - Stop is out of range.')
+                                log.warning('Pokestop - Spin failed - Stop is out of range.')
                                 spin_result = 'Failed'
                             elif spin_response['responses']['FORT_SEARCH']['result'] is 3:
-                                log.info('Pokestop - Spin failed - Stop is cooling down.')
+                                log.warning('Pokestop - Spin failed - Stop is cooling down.')
                                 spin_result = 'Failed'
                             elif spin_response['responses']['FORT_SEARCH']['result'] is 4:
-                                log.info('Pokestop - Spin failed - Inventory is full.')
+                                log.warning('Pokestop - Spin failed - Inventory is full.')
                                 spin_result = 'Failed'
                             elif spin_response['responses']['FORT_SEARCH']['result'] is 5:
-                                log.info('Pokestop - Spin failed - Daily spin limit exceeded?')
+                                log.warning('Pokestop - Spin failed - Daily spin limit exceeded?')
                                 spin_result = 'Failed'
                             else:
-                                log.info('Pokestop - Spin failed - No response resulted in error.')
+                                log.warning('Pokestop - Spin failed - No response resulted in error.')
                                 spin_result = 'Failed'
 
                 if 'active_fort_modifier' in f:
