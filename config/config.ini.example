@@ -57,9 +57,9 @@
 #status-page-password:  # enables and protects the /status page to view status of all workers
 
 # Account Manager API Settings
-#account-api-enabled:						# Enable Account Manager Api (true/false)
-#account-api-key: 						# Account API Key (XXXXXXXXXXXXXXXX)
-#account-api-url: 						# Account API Url (https://yourdomain.com/accounts/update)
+#account-api-enabled:   # Enable Account Manager Api (true/false)
+#account-api-key:       # Account API Key (XXXXXXXXXXXXXXXX)
+#account-api-url:       # Account API Url (https://yourdomain.com/accounts/update)
 
 # Uncomment a line when you want to change its default value (Remove # at the beginning)
 # Please ensure to leave a space after the colon (:) (example setting: value)

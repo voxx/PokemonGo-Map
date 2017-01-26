@@ -742,7 +742,8 @@ def search_worker_thread(args, account_queue, account_failures,
                     time.sleep(2)
 
                 # If this account has been messing up too hard, let it rest.
-                if (args.max_failures > 0) and (consecutive_fails >= args.max_failures):
+                if ((args.max_failures > 0) and
+                        (consecutive_fails >= args.max_failures)):
                     # Account Manager Api Hook
                     if args.account_api_enabled:
                         banned = True
@@ -929,7 +930,7 @@ def search_worker_thread(args, account_queue, account_failures,
                         'CHECK_CHALLENGE']['challenge_url']
                     if len(captcha_url) > 1:
                         status['captcha'] += 1
-                        
+
                         # Account Manager Api Hook
                         if args.account_api_enabled:
                             # Building empty parsed object
@@ -952,7 +953,7 @@ def search_worker_thread(args, account_queue, account_failures,
                                 status['message'] = 'Account {} encountered a captcha. The Account Manager API notification failed.'.format(account['username'])
                                 log.error(status['message'])
                                 time.sleep(5) # Force sleep to ensure /status update
-                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})			    
+                                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
                                 scheduler.task_done(status, parsed)
                                 break # exit this loop to get a new account and have the API recreated
 
@@ -1304,7 +1305,7 @@ def notify_account_api(args, status, username, challenge_url, banned):
     return response_text
 
 def calc_distance(pos1, pos2):
-    R = 6378.1  # KM radius of the earth
+    R = 6378.1  # KM radius of the earth.
 
     dLat = math.radians(pos1[0] - pos2[0])
     dLon = math.radians(pos1[1] - pos2[1])
