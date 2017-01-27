@@ -42,7 +42,8 @@ from pgoapi.exceptions import AuthException
 
 from .models import parse_map, GymDetails, parse_gyms, MainWorker, WorkerStatus
 from .fakePogoApi import FakePogoApi
-from .utils import now, get_tutorial_state, complete_tutorial
+from .utils import (now, get_tutorial_state, complete_tutorial,
+                    generate_device_info)
 from .transform import get_new_coords
 import schedulers
 
@@ -712,7 +713,8 @@ def search_worker_thread(args, account_queue, account_failures,
             if args.mock != '':
                 api = FakePogoApi(args.mock)
             else:
-                api = PGoApi()
+                device_info = generate_device_info()
+                api = PGoApi(device_info=device_info)
 
             # New account - new proxy.
             if args.proxy:
@@ -1144,9 +1146,9 @@ def search_worker_thread(args, account_queue, account_failures,
 
         # Catch any process exceptions, log them, and continue the thread.
         except Exception as e:
-            log.error(
+            log.error((
                 'Exception in search_worker under account {} Exception ' +
-                'message: {}.'.format(account['username'], repr(e)))
+                'message: {}.').format(account['username'], repr(e)))
             status['message'] = (
                 'Exception in search_worker using account {}. Restarting ' +
                 'with fresh account. See logs for details.').format(
