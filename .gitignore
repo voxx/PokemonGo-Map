@@ -16,9 +16,6 @@ src/
 _build
 _build_html
 beehive.*
-static/icons-sprite.png
-static/icons-large-sprite.png
-static/icons/*.png
 static/pixel_icons/*.png
 *.csv
 *.bat
@@ -31,3 +28,6 @@ static/pixel_icons/*.png
 !contrib/supervisord/install-reinstall.sh
 !static/data/*
 !static/icons/hsl*.png
+!static/icons-sprite.png
+!static/icons-large-sprite.png
+!static/icons/*.png
