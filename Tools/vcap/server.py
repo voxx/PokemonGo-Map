@@ -3,13 +3,15 @@
 
 import time
 import json
+import os
 
 from bottle import run, post, request, response, get, route
 
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
 
-with open('config/config.json') as json_data_file:
+fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
+with open(fn) as json_data_file:
     config = json.load(json_data_file)
 
 prot = config['server']['protocol']
