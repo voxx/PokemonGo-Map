@@ -34,7 +34,6 @@ def login(provider, username, password, api):
             password=password)
         rv = [{'auth_status':'success'}]
     except AuthException as e:
-        time.sleep(1)
         rv = [{'auth_status':'fail', 'error':str(e)}]
 
     return dict(data=rv)
@@ -68,8 +67,12 @@ def check(provider):
     response = checkChallenge(api)
 
     try:
-        show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
-        challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
+        if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
+            show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
+            challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
+        else:
+            show_challenge = False
+            challenge_url = False    
         rv = [{'challenge_url': challenge_url}, {'show_challenge': show_challenge}]
     except KeyError, e:
         rv = [{'error': str(e)}]
@@ -87,8 +90,11 @@ def verify(provider):
     response = verifyChallenge(token, api)
 
     try:
-	success = response['responses']['VERIFY_CHALLENGE']['success']
-	rv = [{'success': success}]
+        if 'success' in response['responses']['VERIFY_CHALLENGE']:
+	    success = response['responses']['VERIFY_CHALLENGE']['success']
+        else:
+            success = False
+        rv = [{'success': success}]
     except KeyError, e:
         rv = [{'error': str(e)}]
 
