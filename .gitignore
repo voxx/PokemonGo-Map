@@ -21,6 +21,7 @@ static/pixel_icons/*.png
 *.bat
 *.sh
 *.log
+Tools/PokeAlarm/
 !docs/make.bat
 !Tools/Easy-Setup/easy-setup.sh
 !Tools/Easy-Setup/setup.bat
