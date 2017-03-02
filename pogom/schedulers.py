@@ -725,7 +725,7 @@ class SpeedScan(HexSearch):
         # Avoiding refreshing the Queue when the initial scan is complete, and
         # there are no spawnpoints in the hive.
         if len(queue) == 0:
-+            self.empty_hive = True
+            self.empty_hive = True
         if old_q:
             # Enclosing in try: to avoid divide by zero exceptions from
             # killing overseer
