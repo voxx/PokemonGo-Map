@@ -1722,6 +1722,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     # and a list of forts.
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
+        # If we have map responses then use the time from the request
         now_date = datetime.utcfromtimestamp(
             cell['current_timestamp_ms'] / 1000)
         nearby_pokemon += cell.get('nearby_pokemons', [])
@@ -1732,6 +1733,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
         wild_pokemon += cell.get('wild_pokemons', [])
 
         forts += cell.get('forts', [])
+
     now_secs = date_secs(now_date)
     # If there are no wild or nearby Pokemon . . .
     if not wild_pokemon and not nearby_pokemon:
@@ -1802,6 +1804,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
             # Keep a list of sp_ids to return.
             sp_id_list.append(p['spawn_point_id'])
+
             # time_till_hidden_ms was overflowing causing a negative integer.
             # It was also returning a value above 3.6M ms.
             if 0 < p['time_till_hidden_ms'] < 3600000:
@@ -1811,13 +1814,13 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 if sp['latest_seen'] != sp['earliest_unseen'] or not sp['last_scanned']:
                     log.info('TTH found for spawnpoint %s.', sp['id'])
                     sighting['tth_secs'] = d_t_secs
+
                     # Only update when TTH is seen for the first time.
                     # Just before Pokemon migrations, Niantic sets all TTH
                     # to the exact time of the migration, not the normal
                     # despawn time.
                     sp['latest_seen'] = d_t_secs
                     sp['earliest_unseen'] = d_t_secs
-                    #spawn_points[p['spawn_point_id']] = sp
 
             scan_spawn_points[scan_loc['cellid'] + sp['id']] = {
                 'spawnpoint': sp['id'],
@@ -1835,6 +1838,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     log.warning('Redoing scan of this location to identify '
                                 'new spawnpoint.')
                     ScannedLocation.reset_bands(scan_loc)
+
             if (not SpawnPoint.tth_found(sp) or sighting['tth_secs'] or
                     not scan_loc['done'] or just_completed):
                 SpawnpointDetectionData.classify(sp, scan_loc, now_secs,
