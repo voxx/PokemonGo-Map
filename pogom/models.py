@@ -871,49 +871,6 @@ class ScannedLocation(BaseModel):
         return d
 
     @classmethod
-    def get_by_cells(cls, cells):
-
-        query = (cls
-                 .select()
-                 .where(ScannedLocation.cellid << cells)
-                 .dicts())
-
-        d = {}
-        for sl in list(query):
-            key = "{},{}".format(sl['latitude'], sl['longitude'])
-            d[key] = sl
-
-        return d
-
-    @classmethod
-    def get_band_count_by_cells(cls, cells):
-        return int(cls
-                   .select(fn.SUM(case(None, ((ScannedLocation.band1 == -1, 0),
-                                              (ScannedLocation.band1 == -1, 0)), 1)
-                                  + case(None, ((ScannedLocation.band2 == -1, 0),
-                                                (ScannedLocation.band2 == -1, 0)), 1)
-                                  + case(None, ((ScannedLocation.band3 == -1, 0),
-                                                (ScannedLocation.band3 == -1, 0)), 1)
-                                  + case(None, ((ScannedLocation.band4 == -1, 0),
-                                                (ScannedLocation.band4 == -1, 0)), 1)
-                                  + case(None, ((ScannedLocation.band5 == -1, 0),
-                                                (ScannedLocation.band5 == -1, 0)), 1)).alias('band_count'))
-                   .where(ScannedLocation.cellid << cells)
-                   .scalar() or 0)
-
-    @classmethod
-    def get_band_count_by_cells2(cls, cells):
-
-        return int(ScannedLocation
-                   .select(fn.SUM(fn.IF(ScannedLocation.band1 == -1, 0, 1)
-                                  + fn.IF(ScannedLocation.band2 == -1, 0, 1)
-                                  + fn.IF(ScannedLocation.band3 == -1, 0, 1)
-                                  + fn.IF(ScannedLocation.band4 == -1, 0, 1)
-                                  + fn.IF(ScannedLocation.band5 == -1, 0, 1)).alias('band_count'))
-                   .where(ScannedLocation.cellid << cells)
-                   .scalar())
-
-    @classmethod
     def find_in_locs(cls, loc, locs):
         key = "{},{}".format(loc[0], loc[1])
         return locs[key] if key in locs else cls.new_loc(loc)
