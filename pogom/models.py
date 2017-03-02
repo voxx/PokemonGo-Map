@@ -1346,7 +1346,7 @@ class SpawnPoint(BaseModel):
 
         last_scanned = sp_by_id[sp['id']]['last_scanned']
         if ((now_date - last_scanned).total_seconds() > now_secs - start and
-                start < now_secs + (reschedule_minutes * 90)):
+                start < now_secs + (reschedule_minutes * 180)):
             l.append(ScannedLocation._q_init(scan, start, end, kind, sp['id']))
 
     # Given seconds after the hour and a spawnpoint dict, return which quartile
