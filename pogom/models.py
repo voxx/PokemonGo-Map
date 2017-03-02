@@ -1355,11 +1355,6 @@ class SpawnPoint(BaseModel):
                     3600) / 15 / 60)
 
     @classmethod
-    def raw_sql(query):
-        db = query.model_class._meta.database
-        return query.sql(db.get_compiler())
-
-    @classmethod
     def select_in_hex(cls, cells):
         # Get all spawnpoints from the hive's cells
         sp_from_cells = (ScanSpawnPoint
