@@ -1284,7 +1284,7 @@ class SpawnPoint(BaseModel):
 
     # Return a list of dicts with the next spawn times.
     @classmethod
-    def get_times(cls, cell, scan, now_date, reschedule_minutes, scan_delay,
+    def get_times(cls, cell, scan, now_date, scan_delay,
                   cell_to_linked_spawn_points, sp_by_id):
         l = []
         now_secs = date_secs(now_date)
@@ -1297,7 +1297,7 @@ class SpawnPoint(BaseModel):
                 continue
 
             endpoints = SpawnPoint.start_end(sp, scan_delay)
-            cls.add_if_not_scanned('spawn', l, sp, scan, reschedule_minutes,
+            cls.add_if_not_scanned('spawn', l, sp, scan,
                                    endpoints[0], endpoints[1], now_date,
                                    now_secs, sp_by_id)
 
@@ -1309,13 +1309,13 @@ class SpawnPoint(BaseModel):
             start = sp['latest_seen'] + scan_delay
             end = sp['earliest_unseen']
 
-            cls.add_if_not_scanned('TTH', l, sp, scan, reschedule_minutes,
+            cls.add_if_not_scanned('TTH', l, sp, scan,
                                    start, end, now_date, now_secs, sp_by_id)
 
         return l
 
     @classmethod
-    def add_if_not_scanned(cls, kind, l, sp, scan, reschedule_minutes, start,
+    def add_if_not_scanned(cls, kind, l, sp, scan, start,
                            end, now_date, now_secs, sp_by_id):
         # Make sure later than now_secs.
         while end < now_secs:
@@ -1326,8 +1326,7 @@ class SpawnPoint(BaseModel):
             start -= 3600
 
         last_scanned = sp_by_id[sp['id']]['last_scanned']
-        if ((now_date - last_scanned).total_seconds() > now_secs - start and
-                start < now_secs + (reschedule_minutes * 180)):
+        if ((now_date - last_scanned).total_seconds() > now_secs - start):
             l.append(ScannedLocation._q_init(scan, start, end, kind, sp['id']))
 
     # Given seconds after the hour and a spawnpoint dict, return which quartile
@@ -1364,7 +1363,6 @@ class SpawnPoint(BaseModel):
         in_hex = []
         for spawn in list(query):
             in_hex.append(spawn)
-        log.info('done')
         return in_hex
 
 
@@ -1421,7 +1419,7 @@ class SpawnpointDetectionData(BaseModel):
 
         tth_found = False
         for s in query:
-            if s['tth_secs'] >= 0:
+            if s['tth_secs'] is not None:
                 tth_found = True
 
         # Make a sorted list of the seconds after the hour.
