@@ -866,7 +866,6 @@ class ScannedLocation(BaseModel):
         d = {}
         for sl in list(query):
             key = "{}".format(sl['cellid'])
-            log.info(key)
             d[key] = sl
 
         return d
