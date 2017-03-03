@@ -1428,7 +1428,7 @@ class SpawnpointDetectionData(BaseModel):
         # Get past sightings.
         query = list(cls.select()
                         .where(cls.spawnpoint_id == sp['id'])
-                        .order_by(cls.scan_time)
+                        .order_by(cls.scan_time.asc())
                         .dicts())
 
         if sighting:
