@@ -9,7 +9,6 @@ import traceback
 import gc
 import time
 import geopy
-import math
 from peewee import InsertQuery, \
     Check, CompositeKey, ForeignKeyField, \
     SmallIntegerField, IntegerField, CharField, DoubleField, BooleanField, \
