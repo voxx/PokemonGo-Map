@@ -1064,40 +1064,22 @@ class ScannedLocation(BaseModel):
             scan_loc['band' + str(i)] = -1
 
     @classmethod
-    def select_in_hex(cls, center, steps):
+    def select_in_hex(cls, locs):
         # There should be a way to delegate this to SpawnPoint.select_in_hex,
         # but w/e.
+        cells = []
+        for i, e in enumerate(locs):
+            cells.append(cellid(e[1]))
 
-        R = 6378.1  # KM radius of the earth
-        hdist = ((steps * 120.0) - 50.0) / 1000.0
-        n, e, s, w = hex_bounds(center, steps)
-
-        # Get all spawns in that box.
+        # Get all spawns for the locations.
         sp = list(cls
                   .select()
-                  .where((cls.latitude <= n) &
-                         (cls.latitude >= s) &
-                         (cls.longitude >= w) &
-                         (cls.longitude <= e))
+                  .where(cls.cellid << cells)
                   .dicts())
 
         # For each spawn work out if it is in the hex (clipping the diagonals).
         in_hex = []
         for spawn in sp:
-            # Get the offset from the center of each spawn in km.
-            offset = [math.radians(spawn['latitude'] - center[0]) * R,
-                      math.radians(spawn['longitude'] - center[1]) *
-                      (R * math.cos(math.radians(center[0])))]
-            # Check against the 4 lines that make up the diagonals.
-            if (offset[1] + (offset[0] * 0.5)) > hdist:  # Too far NE.
-                continue
-            if (offset[1] - (offset[0] * 0.5)) > hdist:  # Too far SE
-                continue
-            if ((offset[0] * 0.5) - offset[1]) > hdist:  # Too far NW
-                continue
-            if ((0 - offset[1]) - (offset[0] * 0.5)) > hdist:  # Too far SW
-                continue
-            # If it gets to here it's a good spawn.
             in_hex.append(spawn)
         return in_hex
 

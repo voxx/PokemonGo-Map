@@ -517,8 +517,7 @@ class SpeedScan(HexSearch):
         scans = {}
         initial = {}
         all_scans = {}
-        for sl in ScannedLocation.select_in_hex(self.scan_location,
-                                                self.args.step_limit):
+        for sl in ScannedLocation.select_in_hex(self.locations):
             all_scans[cellid((sl['latitude'], sl['longitude']))] = sl
 
         for i, e in enumerate(self.locations):
