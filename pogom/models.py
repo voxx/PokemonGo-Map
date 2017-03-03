@@ -874,7 +874,6 @@ class ScannedLocation(BaseModel):
     @classmethod
     def find_in_locs(cls, loc, locs):
         key = "{}".format(cellid(loc))
-        log.info(key)
         return locs[key] if key in locs else cls.new_loc(loc)
 
     # Return value of a particular scan from loc, or default dict if not found.
