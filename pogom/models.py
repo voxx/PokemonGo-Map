@@ -865,14 +865,14 @@ class ScannedLocation(BaseModel):
 
         d = {}
         for sl in list(query):
-            key = "{},{}".format(sl['latitude'], sl['longitude'])
+            key = "{:.15f},{:.15f}".format(sl['latitude'], sl['longitude'])
             d[key] = sl
 
         return d
 
     @classmethod
     def find_in_locs(cls, loc, locs):
-        key = "{},{}".format(loc[0], loc[1])
+        key = "{:.15f},{:.15f}".format(loc[0], loc[1])
         return locs[key] if key in locs else cls.new_loc(loc)
 
     # Return value of a particular scan from loc, or default dict if not found.
