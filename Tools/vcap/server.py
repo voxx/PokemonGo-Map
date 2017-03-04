@@ -65,7 +65,7 @@ def check(provider):
     api = initApi()
 
     user = login(provider, username, password, api)
-    if 'success' in user['data']['auth_status']:
+    if 'success' in user['data'][0]['auth_status']:
         response = checkChallenge(api)
     else:
         rv = [{'error': str(user)}]
@@ -93,7 +93,7 @@ def verify(provider):
     api = initApi()
 
     user = login(provider, username, password, api)
-    if 'success' in user['data']['auth_status']:
+    if 'success' in user['data'][0]['auth_status']:
         response = verifyChallenge(token, api)
     else:
         rv = [{'error': str(user)}]
