@@ -63,16 +63,21 @@ def check(provider):
     password   = request.forms.get('password')
 
     api = initApi()
+
     user = login(provider, username, password, api)
-    response = checkChallenge(api)
+    if 'success' in user['auth_status']:
+        response = checkChallenge(api)
+    else:
+        rv = [{'error': str(user)}]
+        return dict(data=rv)
 
     try:
-        if 'CHECK_CHALLENGE' in response['responses'] and 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
+        if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
             challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
         else:
             show_challenge = False
-            challenge_url = False    
+            challenge_url = False
         rv = [{'challenge_url': challenge_url}, {'show_challenge': show_challenge}]
     except KeyError, e:
         rv = [{'error': str(e)}]
@@ -86,11 +91,16 @@ def verify(provider):
     token	= request.forms.get('token')
 
     api = initApi()
+
     user = login(provider, username, password, api)
-    response = verifyChallenge(token, api)
+    if 'success' in user['auth_status']:
+        response = verifyChallenge(token, api)
+    else:
+        rv = [{'error': str(user)}]
+        return dict(data=rv)
 
     try:
-        if 'VERIFY_CHALLENGE' in response['responses'] and 'success' in response['responses']['VERIFY_CHALLENGE']:
+        if 'success' in response['responses']['VERIFY_CHALLENGE']:
             success = True
         else:
             success = False
