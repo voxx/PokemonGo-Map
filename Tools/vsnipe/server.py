@@ -67,7 +67,7 @@ def check(provider):
     response = checkChallenge(api)
 
     try:
-        if 'CHECK_CHALLENGE' in response['responses'] and 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
+        if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
             challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
         else:
@@ -90,8 +90,8 @@ def verify(provider):
     response = verifyChallenge(token, api)
 
     try:
-        if 'VERIFY_CHALLENGE' in response['responses'] and 'success' in response['responses']['VERIFY_CHALLENGE']:
-            success = True
+        if 'success' in response['responses']['VERIFY_CHALLENGE']:
+	    success = response['responses']['VERIFY_CHALLENGE']['success']
         else:
             success = False
         rv = [{'success': success}]
