@@ -1306,8 +1306,17 @@ class SpawnPoint(BaseModel):
                 continue
 
             # Add a spawnpoint check between latest_seen and earliest_unseen.
-            start = sp['latest_seen'] + scan_delay
+            start = sp['latest_seen']
             end = sp['earliest_unseen']
+
+            # So if the gap between start and end < 89 seconds make the gap
+            # 89 seconds
+            if ((end > start and end - start < 89) or
+                    (start > end and (end + 3600) - start < 89)):
+                end = (start + 89) % 3600
+            # So we move the search gap on 45 to within 45 and 89 seconds from
+            # the last scan. TTH appears in the last 90 seconds of the Spawn.
+            start = sp['latest_seen'] + 45
 
             cls.add_if_not_scanned('TTH', l, sp, scan,
                                    start, end, now_date, now_secs, sp_by_id)
