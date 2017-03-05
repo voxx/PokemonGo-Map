@@ -1436,20 +1436,6 @@ class SpawnpointDetectionData(BaseModel):
     @classmethod
     def classify(cls, sp, scan_loc, now_secs, sighting=None):
 
-        # To reduce CPU usage, give an intial reading of 15 minute spawns if
-        # not done with initial scan of location.
-        if not scan_loc['done']:
-            sp['kind'] = 'hhhs'
-            if not sp['earliest_unseen']:
-                sp['latest_seen'] = now_secs
-                cls.set_default_earliest_unseen(sp)
-
-            elif clock_between(sp['latest_seen'], now_secs,
-                               sp['earliest_unseen']):
-                sp['latest_seen'] = now_secs
-
-            return
-
         # Get past sightings.
         query = list(cls.select()
                         .where(cls.spawnpoint_id == sp['id'])
@@ -1459,14 +1445,30 @@ class SpawnpointDetectionData(BaseModel):
         if sighting:
             query.append(sighting)
 
-        # Make a record of links, so we can reset earliest_unseen
-        # if it changes.
-        old_kind = str(sp['kind'])
-
         tth_found = False
         for s in query:
             if s['tth_secs'] is not None:
                 tth_found = True
+
+        # To reduce CPU usage, give an intial reading of 15 minute spawns if
+        # not done with initial scan of location.
+        if not scan_loc['done']:
+            # We only want to reset a SP if it is new and not due the
+            # location changing (which creates new Scannedlocations)
+            if not tth_found:
+                sp['kind'] = 'hhhs'
+                if not sp['earliest_unseen']:
+                    sp['latest_seen'] = now_secs
+                    cls.set_default_earliest_unseen(sp)
+
+                elif clock_between(sp['latest_seen'], now_secs,
+                                   sp['earliest_unseen']):
+                    sp['latest_seen'] = now_secs
+            return
+
+        # Make a record of links, so we can reset earliest_unseen
+        # if it changes.
+        old_kind = str(sp['kind'])
 
         # Make a sorted list of the seconds after the hour.
         seen_secs = sorted(map(lambda x: date_secs(x['scan_time']), query))
