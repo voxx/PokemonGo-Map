@@ -9,6 +9,7 @@ import traceback
 import gc
 import time
 import geopy
+import math
 from peewee import InsertQuery, \
     Check, CompositeKey, ForeignKeyField, \
     SmallIntegerField, IntegerField, CharField, DoubleField, BooleanField, \
@@ -933,6 +934,7 @@ class ScannedLocation(BaseModel):
                                        'cellid'))
                        .join(sp_from_cells, on=sp_from_cells.c.spawnpoint_id
                              == ScanSpawnPoint.spawnpoint)
+                       .where(ScanSpawnPoint.scannedlocation << cellids)
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
         # As scan locations overlap,spawnpoints can belong to up to 3 locations
@@ -1346,11 +1348,11 @@ class SpawnPoint(BaseModel):
                     3600) / 15 / 60)
 
     @classmethod
-    def select_in_hex(cls, cells):
+    def select_in_hex_by_cellids(cls, cellids):
         # Get all spawnpoints from the hive's cells
         sp_from_cells = (ScanSpawnPoint
                          .select(ScanSpawnPoint.spawnpoint)
-                         .where(ScanSpawnPoint.scannedlocation << cells)
+                         .where(ScanSpawnPoint.scannedlocation << cellids)
                          .alias('spcells'))
         # Allocate a spawnpoint to one cell only
         one_sp_scan = (ScanSpawnPoint
@@ -1359,6 +1361,7 @@ class SpawnPoint(BaseModel):
                                        'Max_ScannedLocation_id'))
                        .join(sp_from_cells, on=sp_from_cells.c.spawnpoint_id
                              == ScanSpawnPoint.spawnpoint)
+                       .where(ScanSpawnPoint.scannedlocation << cellids)
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
 
@@ -1366,11 +1369,45 @@ class SpawnPoint(BaseModel):
                  .select(cls)
                  .join(one_sp_scan,
                        on=(one_sp_scan.c.spawnpoint_id == cls.id))
-                 .where(one_sp_scan.c.Max_ScannedLocation_id << cells)
                  .dicts())
 
         in_hex = []
         for spawn in list(query):
+            in_hex.append(spawn)
+        return in_hex
+
+    @classmethod
+    def select_in_hex_by_location(cls, center, steps):
+        R = 6378.1  # KM radius of the earth
+        hdist = ((steps * 120.0) - 50.0) / 1000.0
+        n, e, s, w = hex_bounds(center, steps)
+
+        # Get all spawns in that box.
+        sp = list(cls
+                  .select()
+                  .where((cls.latitude <= n) &
+                         (cls.latitude >= s) &
+                         (cls.longitude >= w) &
+                         (cls.longitude <= e))
+                  .dicts())
+
+        # For each spawn work out if it is in the hex (clipping the diagonals).
+        in_hex = []
+        for spawn in sp:
+            # Get the offset from the center of each spawn in km.
+            offset = [math.radians(spawn['latitude'] - center[0]) * R,
+                      math.radians(spawn['longitude'] - center[1]) *
+                      (R * math.cos(math.radians(center[0])))]
+            # Check against the 4 lines that make up the diagonals.
+            if (offset[1] + (offset[0] * 0.5)) > hdist:  # Too far NE
+                continue
+            if (offset[1] - (offset[0] * 0.5)) > hdist:  # Too far SE
+                continue
+            if ((offset[0] * 0.5) - offset[1]) > hdist:  # Too far NW
+                continue
+            if ((0 - offset[1]) - (offset[0] * 0.5)) > hdist:  # Too far SW
+                continue
+            # If it gets to here it's a good spawn.
             in_hex.append(spawn)
         return in_hex
 

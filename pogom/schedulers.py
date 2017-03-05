@@ -533,7 +533,8 @@ class SpeedScan(HexSearch):
         log.info('%d steps created', len(scans))
         self.band_spacing = int(10 * 60 / len(scans))
         self.band_status()
-        spawnpoints = SpawnPoint.select_in_hex(self.scans.keys())
+        spawnpoints = SpawnPoint.select_in_hex_by_location(
+            self.scan_location, self.args.step_limit)
         if not spawnpoints:
             log.info('No spawnpoints in hex found in SpawnPoint table. ' +
                      'Doing initial scan.')
@@ -758,7 +759,8 @@ class SpeedScan(HexSearch):
                 found_percent = 100.0
                 good_percent = 100.0
                 spawns_reached = 100.0
-                spawnpoints = SpawnPoint.select_in_hex(self.scans.keys())
+                spawnpoints = SpawnPoint.select_in_hex_by_cellids(
+                    self.scans.keys())
                 for sp in spawnpoints:
                     if sp['missed_count'] > 5:
                         continue
