@@ -937,8 +937,10 @@ class ScannedLocation(BaseModel):
                              == ScanSpawnPoint.spawnpoint)
                        .join(cls, on=(cls.cellid ==
                              ScanSpawnPoint.scannedlocation))
-                       .where((cls.last_modified >= location_change_date) | (
-                             cls.cellid << cellids))
+                       .where((cls.last_modified >= location_change_date & (
+                               cls.last_modified > (
+                                datetime.utcnow() - timedelta(minutes=60)))) |
+                              (cls.cellid << cellids))
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
         # As scan locations overlap,spawnpoints can belong to up to 3 locations
@@ -1370,8 +1372,10 @@ class SpawnPoint(BaseModel):
                        .join(ScannedLocation, on=(ScannedLocation.cellid
                              == ScanSpawnPoint.scannedlocation))
                        .where((ScannedLocation.last_modified
-                               >= location_change_date) | (
-                               ScannedLocation.cellid << cellids))
+                               >= location_change_date & (
+                                ScannedLocation.last_modified > (
+                                 datetime.utcnow() - timedelta(minutes=60)))) |
+                              (ScannedLocation.cellid << cellids))
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
 
