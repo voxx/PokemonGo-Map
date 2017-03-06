@@ -705,8 +705,8 @@ class SpeedScan(HexSearch):
         # extract all spawnpoints into a dict with spawnpoint
         # id -> spawnpoint for easy access later
         cell_to_linked_spawn_points = (
-            ScannedLocation.get_cell_to_linked_spawn_points(self.scans.keys(),
-                self.location_change_date))
+            ScannedLocation.get_cell_to_linked_spawn_points(
+                self.scans.keys(), self.location_change_date))
         sp_by_id = {}
         for sps in cell_to_linked_spawn_points.itervalues():
             for sp in sps:
