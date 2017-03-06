@@ -1370,8 +1370,8 @@ class SpawnPoint(BaseModel):
                        .join(ScannedLocation, on=(ScannedLocation.cellid
                              == ScanSpawnPoint.scannedlocation))
                        .where((ScannedLocation.last_modified
-                             >= location_change_date) | (
-                             ScannedLocation.cellid << cellids))
+                               >= location_change_date) | (
+                               ScannedLocation.cellid << cellids))
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
 
