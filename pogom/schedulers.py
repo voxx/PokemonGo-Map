@@ -480,6 +480,7 @@ class SpeedScan(HexSearch):
         super(SpeedScan, self).__init__(queues, status, args)
         self.refresh_date = datetime.utcnow() - timedelta(days=1)
         self.next_band_date = self.refresh_date
+        self.location_change_date = datetime.utcnow()
         self.queues = [[]]
         self.ready = False
         self.empty_hive = False
@@ -513,6 +514,7 @@ class SpeedScan(HexSearch):
     # On location change, empty the current queue and the locations list
     def location_changed(self, scan_location, db_update_queue):
         super(SpeedScan, self).location_changed(scan_location, db_update_queue)
+        self.location_change_date = datetime.utcnow()
         self.locations = self._generate_locations()
         scans = {}
         initial = {}
@@ -703,7 +705,8 @@ class SpeedScan(HexSearch):
         # extract all spawnpoints into a dict with spawnpoint
         # id -> spawnpoint for easy access later
         cell_to_linked_spawn_points = (
-            ScannedLocation.get_cell_to_linked_spawn_points(self.scans.keys()))
+            ScannedLocation.get_cell_to_linked_spawn_points(self.scans.keys(),
+                self.location_change_date))
         sp_by_id = {}
         for sps in cell_to_linked_spawn_points.itervalues():
             for sp in sps:
@@ -760,7 +763,7 @@ class SpeedScan(HexSearch):
                 good_percent = 100.0
                 spawns_reached = 100.0
                 spawnpoints = SpawnPoint.select_in_hex_by_cellids(
-                    self.scans.keys())
+                    self.scans.keys(), self.location_change_date)
                 for sp in spawnpoints:
                     if sp['missed_count'] > 5:
                         continue

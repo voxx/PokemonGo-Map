@@ -920,21 +920,25 @@ class ScannedLocation(BaseModel):
 
     # Return list of dicts for upcoming valid band times.
     @classmethod
-    def get_cell_to_linked_spawn_points(cls, cellids):
+    def get_cell_to_linked_spawn_points(cls, cellids, location_change_date):
 
         # Get all spawnpoints from the hive's cells
         sp_from_cells = (ScanSpawnPoint
                          .select(ScanSpawnPoint.spawnpoint)
                          .where(ScanSpawnPoint.scannedlocation << cellids)
                          .alias('spcells'))
-        # Allocate a spawnpoint to one cell only
+        # A new SL (new ones are created when the location changes) or
+        # it can be a cell from another active hive
         one_sp_scan = (ScanSpawnPoint
                        .select(ScanSpawnPoint.spawnpoint,
                                fn.MAX(ScanSpawnPoint.scannedlocation).alias(
                                        'cellid'))
                        .join(sp_from_cells, on=sp_from_cells.c.spawnpoint_id
                              == ScanSpawnPoint.spawnpoint)
-                       .where(ScanSpawnPoint.scannedlocation << cellids)
+                       .join(cls, on=(cls.cellid ==
+                             ScanSpawnPoint.scannedlocation))
+                       .where((cls.last_modified >= location_change_date) | (
+                             cls.cellid << cellids))
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
         # As scan locations overlap,spawnpoints can belong to up to 3 locations
@@ -1348,20 +1352,26 @@ class SpawnPoint(BaseModel):
                     3600) / 15 / 60)
 
     @classmethod
-    def select_in_hex_by_cellids(cls, cellids):
+    def select_in_hex_by_cellids(cls, cellids, location_change_date):
         # Get all spawnpoints from the hive's cells
         sp_from_cells = (ScanSpawnPoint
                          .select(ScanSpawnPoint.spawnpoint)
                          .where(ScanSpawnPoint.scannedlocation << cellids)
                          .alias('spcells'))
-        # Allocate a spawnpoint to one cell only
+        # Allocate a spawnpoint to one cell only, this can either be
+        # A new SL (new ones are created when the location changes) or
+        # it can be a cell from another active hive
         one_sp_scan = (ScanSpawnPoint
                        .select(ScanSpawnPoint.spawnpoint,
                                fn.MAX(ScanSpawnPoint.scannedlocation).alias(
                                        'Max_ScannedLocation_id'))
                        .join(sp_from_cells, on=sp_from_cells.c.spawnpoint_id
                              == ScanSpawnPoint.spawnpoint)
-                       .where(ScanSpawnPoint.scannedlocation << cellids)
+                       .join(ScannedLocation, on=(ScannedLocation.cellid
+                             == ScanSpawnPoint.scannedlocation))
+                       .where((ScannedLocation.last_modified
+                             >= location_change_date) | (
+                             ScannedLocation.cellid << cellids))
                        .group_by(ScanSpawnPoint.spawnpoint)
                        .alias('maxscan'))
 
@@ -1369,6 +1379,7 @@ class SpawnPoint(BaseModel):
                  .select(cls)
                  .join(one_sp_scan,
                        on=(one_sp_scan.c.spawnpoint_id == cls.id))
+                 .where(one_sp_scan.c.Max_ScannedLocation_id << cellids)
                  .dicts())
 
         in_hex = []
