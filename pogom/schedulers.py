@@ -562,52 +562,27 @@ class SpeedScan(HexSearch):
     # since it didn't recognize the location in the ScannedLocation table
     def _generate_locations(self):
 
-        NORTH = 0
-        EAST = 90
-        SOUTH = 180
-        WEST = 270
-
         # dist between column centers
         xdist = math.sqrt(3) * self.step_distance
-        ydist = 3 * (self.step_distance / 2)       # dist between row centers
 
         results = []
-
         loc = self.scan_location
         results.append((loc[0], loc[1], 0))
-
-        # upper part
+        # This will loop thorugh all the rings in the hex from the centre
+        # moving outwards
         for ring in range(1, self.step_limit):
-
-            for i in range(max(ring - 1, 1)):
-                if ring > 1:
-                    loc = get_new_coords(loc, ydist, NORTH)
-
-                loc = get_new_coords(loc, xdist / (1 + (ring > 1)), WEST)
-                results.append((loc[0], loc[1], 0))
-
-            for i in range(ring):
-                loc = get_new_coords(loc, ydist, NORTH)
-                loc = get_new_coords(loc, xdist / 2, EAST)
-                results.append((loc[0], loc[1], 0))
-
-            for i in range(ring):
-                loc = get_new_coords(loc, xdist, EAST)
-                results.append((loc[0], loc[1], 0))
-
-            for i in range(ring):
-                loc = get_new_coords(loc, ydist, SOUTH)
-                loc = get_new_coords(loc, xdist / 2, EAST)
-                results.append((loc[0], loc[1], 0))
-
-            for i in range(ring):
-                loc = get_new_coords(loc, ydist, SOUTH)
-                loc = get_new_coords(loc, xdist / 2, WEST)
-                results.append((loc[0], loc[1], 0))
-
-            for i in range(ring + (ring + 1 < self.step_limit)):
-                loc = get_new_coords(loc, xdist, WEST)
-                results.append((loc[0], loc[1], 0))
+            for i in range(0, 6):
+                # Star_locs will contain the locations of the 6 vertices of
+                # the current ring (90,150,210,270,330 and 30 degrees from
+                # origin) to form a star
+                star_loc = get_new_coords(self.scan_location, xdist * ring,
+                                          90 + 60*i)
+                for j in range(0, ring):
+                    # Then from each point on the star, create locations
+                    # towards the next point of star along the edge of the
+                    # current ring
+                    loc = get_new_coords(star_loc, xdist * (j), 210 + 60*i)
+                    results.append((loc[0], loc[1], 0))
 
         generated_locations = []
         for step, location in enumerate(results):

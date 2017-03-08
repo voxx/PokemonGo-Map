@@ -896,6 +896,9 @@ class ScannedLocation(BaseModel):
                 continue
 
             for sp in spawn_points:
+                if (abs(sp['latitude'] - scan['loc'][0]) > 0.0008 or
+                        abs(sp['longitude'] - scan['loc'][1]) > 0.0012):
+                    continue
                 if in_radius((sp['latitude'], sp['longitude']),
                              scan['loc'], distance):
                     scan_spawn_point[cell + sp['id']] = {
@@ -937,8 +940,8 @@ class ScannedLocation(BaseModel):
                              == ScanSpawnPoint.spawnpoint)
                        .join(cls, on=(cls.cellid ==
                              ScanSpawnPoint.scannedlocation))
-                       .where((cls.last_modified >= location_change_date & (
-                               cls.last_modified > (
+                       .where(((cls.last_modified >= (location_change_date)) &
+                               (cls.last_modified > (
                                 datetime.utcnow() - timedelta(minutes=60)))) |
                               (cls.cellid << cellids))
                        .group_by(ScanSpawnPoint.spawnpoint)
@@ -952,7 +955,6 @@ class ScannedLocation(BaseModel):
                                         one_sp_scan.c.spawnpoint_id))
                  .where(one_sp_scan.c.cellid << cellids)
                  .dicts())
-
         l = list(query)
         ret = {}
         for item in l:
@@ -1371,8 +1373,8 @@ class SpawnPoint(BaseModel):
                              == ScanSpawnPoint.spawnpoint)
                        .join(ScannedLocation, on=(ScannedLocation.cellid
                              == ScanSpawnPoint.scannedlocation))
-                       .where((ScannedLocation.last_modified
-                               >= location_change_date & (
+                       .where(((ScannedLocation.last_modified
+                               >= (location_change_date)) & (
                                 ScannedLocation.last_modified > (
                                  datetime.utcnow() - timedelta(minutes=60)))) |
                               (ScannedLocation.cellid << cellids))
