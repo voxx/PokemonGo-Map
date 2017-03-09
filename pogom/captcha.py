@@ -16,6 +16,7 @@
 import logging
 import time
 import requests
+import urllib
 
 from datetime import datetime
 from threading import Thread
@@ -183,6 +184,28 @@ def handle_captcha(args, status, api, account, account_failures,
             'CHECK_CHALLENGE']['challenge_url']
         if len(captcha_url) > 1:
             status['captcha'] += 1
+
+            # Account Manager Api Hook
+            if args.account_api_enabled:
+                # Building empty parsed object
+                parsed = {
+                    'count': 0,
+                    'gyms': [],
+                    'spawn_points': step_location,
+                    'bad_scan': True
+                }
+                banned = False
+                api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
+                if 'success' in api_response:
+                    status['message'] = 'Account {} encountered a captcha. The Account Manager API was successfully notified.'.format(account['username'])
+                else:
+                    status['message'] = 'Account {} encountered a captcha. The Account Manager API notification failed.'.format(account['username'])
+
+                account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
+                log.warning(status['message'])
+                time.sleep(5) # Force sleep to ensure /status update
+                return parsed # Return bad scan object to catch and force rescan instead of skipping
+
             if not args.captcha_solving:
                 status['message'] = ('Account {} has encountered a captcha. ' +
                                      'Putting account away.').format(
@@ -323,3 +346,19 @@ def token_request(args, status, url):
                 args.captcha_key, captcha_id)).text
     token = str(recaptcha_response.split('|')[1])
     return token
+
+
+def notify_account_api(args, status, username, challenge_url, banned):
+    s = requests.Session()
+    # Send the captcha challenge or banned account status details to accounts api.
+    try:
+        api_response	= s.get("{}/{}/{}?url={}&banned={}".format(args.account_api_url, args.account_api_key, username, urllib.quote(challenge_url,safe=''), banned))
+        response_code	= api_response.status_code
+        response_text	= str(api_response.text)
+    # status 401 = unauthorized api request / 404 user not found
+    except Exception as e:
+        status['message'] = '{} Exception occurred while notifying Account Manager API: {}'.format(response_code, e)
+        log.exception(status['message'])
+        return 'ERROR'
+
+    return response_text
