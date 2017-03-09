@@ -1486,7 +1486,6 @@ class SpawnpointDetectionData(BaseModel):
         # Make a record of links, so we can reset earliest_unseen
         # if it changes.
         old_kind = str(sp['kind'])
-
         # Make a sorted list of the seconds after the hour.
         seen_secs = sorted(map(lambda x: date_secs(x['scan_time']), query))
 
@@ -1533,7 +1532,6 @@ class SpawnpointDetectionData(BaseModel):
                 # spawn has changed, reset to latest_seen + 14 minutes.
                 if not sp['earliest_unseen'] or sp['kind'] != old_kind:
                     cls.set_default_earliest_unseen(sp)
-
             return
 
         # Only ssss spawns from here below.
@@ -2101,6 +2099,11 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 # Don't overwrite changes from this parse with DB version.
                 sp = spawn_points[sp['id']]
             else:
+                # If the cell has completed, we need to classify all
+                # the SPs that were not picked up in the scan
+                if just_completed:
+                    SpawnpointDetectionData.classify(sp, scan_loc, now_secs)
+                    spawn_points[sp['id']] = sp
                 if SpawnpointDetectionData.unseen(sp, now_secs):
                     spawn_points[sp['id']] = sp
                 endpoints = SpawnPoint.start_end(sp, args.spawn_delay)
