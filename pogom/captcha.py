@@ -254,6 +254,7 @@ def handle_captcha(args, status, api, account, account_failures,
                 return False
     except KeyError, e:
         log.error('Unable to check captcha: {}'.format(e))
+        log.error('{}'.format(response_dict))
 
     return None
 
