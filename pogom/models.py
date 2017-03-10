@@ -894,10 +894,12 @@ class ScannedLocation(BaseModel):
         for cell, scan in scans.iteritems():
             if initial[cell]['done'] and not force:
                 continue
-
+            # Difference in degrees at the equator for 70m is actually 0.00063
+            # degrees and gets smaller the further north or south you go
+            deg_at_lat = 0.0007 / math.cos(math.radians(scan['loc'][0]))
             for sp in spawn_points:
                 if (abs(sp['latitude'] - scan['loc'][0]) > 0.0008 or
-                        abs(sp['longitude'] - scan['loc'][1]) > 0.0012):
+                        abs(sp['longitude'] - scan['loc'][1]) > deg_at_lat):
                     continue
                 if in_radius((sp['latitude'], sp['longitude']),
                              scan['loc'], distance):
