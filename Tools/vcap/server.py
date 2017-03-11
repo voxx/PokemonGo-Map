@@ -11,8 +11,8 @@ from bottle import run, post, request, response, get, route
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
 
-sys.path.append("/RocketMap/pogom/")
-from utils import generate_device_info
+sys.path.append("/RocketMap/")
+from pogom.utils import generate_device_info
 
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
