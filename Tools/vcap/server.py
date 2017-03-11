@@ -17,12 +17,16 @@ with open(fn) as json_data_file:
 prot = config['server']['protocol']
 host = config['server']['host']
 port = int(config['server']['port'])
+hkey = config['hash_key']['key']
 
 def initApi():
     location = [float(config['location']['lat']), float(config['location']['long'])]
 
     api = PGoApi()
     api.set_position(*location)
+    
+    if config['hash_key']['enabled'] is "True":
+        api.activate_hash_server(hkey)
 
     return api
 

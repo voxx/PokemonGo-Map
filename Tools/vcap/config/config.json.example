@@ -8,5 +8,9 @@
         "lat":"0",
         "long":"0",
         "alt":"0"
+    },
+    "hash_key":{
+	"enabled":"True",
+	"key":""
     }
 }
