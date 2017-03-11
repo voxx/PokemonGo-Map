@@ -1051,9 +1051,10 @@ class SpeedScan(HexSearch):
                 return
 
             safety_buffer = item['end'] - scan_secs
+            start_secs = item['start']
             if item['kind'] == 'spawn':
-                start_secs = item['start'] - self.args.spawn_delay
-                start_delay = (scan_secs - start_secs) % 3600
+                start_secs -= self.args.spawn_delay
+            start_delay = (scan_secs - start_secs) % 3600
             if safety_buffer < 0:
                 log.warning('Too late by %d sec for a %s at step %d', -
                             safety_buffer, item['kind'], item['step'])
