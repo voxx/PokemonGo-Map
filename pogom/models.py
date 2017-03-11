@@ -1346,6 +1346,9 @@ class SpawnPoint(BaseModel):
         while start > end:
             start -= 3600
 
+        while start < 0:
+            start, end = start + 3600, end + 3600
+
         last_scanned = sp_by_id[sp['id']]['last_scanned']
         if ((now_date - last_scanned).total_seconds() > now_secs - start):
             l.append(ScannedLocation._q_init(scan, start, end, kind, sp['id']))
@@ -2135,14 +2138,16 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
             'count': len(wild_pokemon) + len(forts),
             'gyms': gyms,
             'sp_id_list': sp_id_list,
-            'bad_scan': True
+            'bad_scan': True,
+            'scan_secs': now_secs
         }
 
     return {
         'count': len(wild_pokemon) + len(forts),
         'gyms': gyms,
         'sp_id_list': sp_id_list,
-        'bad_scan': False
+        'bad_scan': False,
+        'scan_secs': now_secs
     }
 
 

@@ -353,7 +353,7 @@ def search_overseer_thread(args, new_location_queue, pause_bit, heartb,
     account_queue = Queue()
     threadStatus = {}
     key_scheduler = None
-    api_version = '0.57.2'
+    api_version = '0.57.4'
     api_check_time = 0
 
     '''
@@ -537,7 +537,14 @@ def search_overseer_thread(args, new_location_queue, pause_bit, heartb,
                     i].get_overseer_message()
 
         # Let's update the total stats and add that info to message
-        update_total_stats(threadStatus, last_account_status)
+        try:
+            update_total_stats(threadStatus, last_account_status)
+        except Exception as e:
+            log.error(
+                'Update total stats had an Exception: {}.'.format(
+                    repr(e)))
+            traceback.print_exc(file=sys.stdout)
+            time.sleep(10)
         threadStatus['Overseer']['message'] += '\n' + get_stats_message(
             threadStatus)
 
@@ -871,7 +878,7 @@ def search_worker_thread(args, account_queue, account_failures,
                         break
 
                 # Grab the next thing to search (when available).
-                step, step_location, appears, leaves, messages = (
+                step, step_location, step_start, appears, leaves, messages = (
                     scheduler.next_item(status))
                 status['message'] = messages['wait']
 
@@ -989,7 +996,8 @@ def search_worker_thread(args, account_queue, account_failures,
 
                     parsed = parse_map(args, response_dict, step_location,
                                        dbq, whq, api, scan_date)
-                    scheduler.task_done(status, parsed)
+                    scheduler.task_done(status, step, step_location,
+                                        step_start, parsed)
                     if parsed['count'] > 0:
                         status['success'] += 1
                         consecutive_noitems = 0
