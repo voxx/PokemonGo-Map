@@ -28,8 +28,9 @@ def initApi():
 
     device_info = generate_device_info()
     api = PGoApi(device_info=device_info)
-
-    if config['hash_key']['enabled'] is "True":
+    print('DEBUG: hash_key enabled: ' + config['hash_key']['enabled'])
+    print('DEBUG: key value: ' + config['hash_key']['key'])
+    if config['hash_key']['enabled'] is 'True':
         print('Using key {} for this request.'.format(hkey))
         api.activate_hash_server(hkey)
 
