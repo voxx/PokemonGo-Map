@@ -10,6 +10,9 @@ from bottle import run, post, request, response, get, route
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
 
+sys.path.append("/RocketMap/pogom/")
+from utils import generate_device_info
+
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
     config = json.load(json_data_file)
@@ -22,11 +25,14 @@ hkey = config['hash_key']['key']
 def initApi():
     location = [float(config['location']['lat']), float(config['location']['long'])]
 
-    api = PGoApi()
-    api.set_position(*location)
-    
+    device_info = generate_device_info()
+    api = PGoApi(device_info=device_info)
+
     if config['hash_key']['enabled'] is "True":
+        print('Using key {} for this request.'.format(hkey))
         api.activate_hash_server(hkey)
+
+    api.set_position(*location)
 
     return api
 
@@ -48,6 +54,7 @@ def checkChallenge(api):
         response = req.check_challenge()
         response = req.get_inventory()
         response = req.call()
+        print(response)
         return response
 
     except Exception as e:
