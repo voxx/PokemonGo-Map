@@ -55,7 +55,6 @@ def checkChallenge(api):
         response = req.check_challenge()
         response = req.get_inventory()
         response = req.call()
-        print(response)
         return response
 
     except Exception as e:
