@@ -147,8 +147,10 @@ def vsnipe():
     position = [float(lat), float(lng), float(6.66)]
     map_dict = map_request(api, position)
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
+    wild_pokemon = []
+    
     for cell in cells:
-         wild_pokemon += cell.get('wild_pokemons', [])
+        wild_pokemon += cell.get('wild_pokemons', [])
     
     print(wild_pokemon)
     time.sleep(5)
