@@ -84,7 +84,7 @@ def map_request(api, position, no_jitter=False):
         return response
 
     except Exception as e:
-        log.warning('Exception while downloading map: %s', repr(e))
+        print('Exception while downloading map: %s', repr(e))
     return False
 
 def encounter(api, eid, sid, lat, lng):
@@ -145,7 +145,7 @@ def vsnipe():
     user = login(api)
     
     position = [float(lat), float(lng)]
-    request = map_request(api, position)
+    scan = map_request(api, position)
     response = encounter(api, eid, sid, lat, lng)
 
     try:
