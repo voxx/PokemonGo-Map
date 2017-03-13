@@ -76,11 +76,11 @@ def map_request(api, position, no_jitter=False):
                                        longitude=f2i(scan_location[1]),
                                        since_timestamp_ms=timestamps,
                                        cell_id=cell_ids)
-        response = req.check_challenge()
-        response = req.get_hatched_eggs()
-        response = req.get_inventory()
-        response = req.check_awarded_badges()
-        response = req.download_settings()
+        #response = req.check_challenge()
+        #response = req.get_hatched_eggs()
+        #response = req.get_inventory()
+        #response = req.check_awarded_badges()
+        #response = req.download_settings()
         response = req.get_buddy_walked()
         response = req.call()
         return response
@@ -97,15 +97,13 @@ def encounter(api, eid, sid, lat, lng):
             spawn_point_id=str(sid),
             player_latitude=float(lat),
             player_longitude=float(lng))
-        encounter_result = req.check_challenge()
-        encounter_result = req.get_hatched_eggs()
-        encounter_result = req.get_inventory()
-        encounter_result = req.check_awarded_badges()
-        encounter_result = req.download_settings()
-        encounter_result = req.get_buddy_walked()
+        #encounter_result = req.check_challenge()
+        #encounter_result = req.get_hatched_eggs()
+        #encounter_result = req.get_inventory()
+        #encounter_result = req.check_awarded_badges()
+        #encounter_result = req.download_settings()
+        #encounter_result = req.get_buddy_walked()
         encounter_result = req.call()
-
-        print(encounter_result)
 
         if (encounter_result is not None and 'wild_pokemon' in encounter_result['responses']['ENCOUNTER']):
             pokemon_info = encounter_result['responses']['ENCOUNTER']['wild_pokemon']['pokemon_data']
@@ -147,8 +145,12 @@ def vsnipe():
     user = login(api)
     
     position = [float(lat), float(lng), float(6.66)]
-    scan = map_request(api, position)
-    print(scan)
+    map_dict = map_request(api, position)
+    cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
+    for cell in cells:
+         wild_pokemon += cell.get('wild_pokemons', [])
+    
+    print(wild_pokemon)
     time.sleep(5)
     response = encounter(api, eid, sid, lat, lng)
 
