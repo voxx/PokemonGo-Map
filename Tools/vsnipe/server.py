@@ -15,6 +15,7 @@ from pgoapi import utilities as util
 
 sys.path.append("/RocketMap/")
 from pogom.utils import generate_device_info
+from pogom.transform import jitter_location
 
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
