@@ -142,6 +142,7 @@ def vsnipe():
     for cell in cells:
         wild_pokemon += cell.get('wild_pokemons', [])
     
+    response = False
     for pokemon in wild_pokemon:
         if (pokemon['pokemon_data']['pokemon_id'] == int(pid) ):
             time.sleep(10)
