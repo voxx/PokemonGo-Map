@@ -60,8 +60,8 @@ def encounter(api, eid, sid, lat, lng):
         encounter_result = req.encounter(
             encounter_id=eid,
             spawn_point_id=sid,
-            player_latitude=int(lat),
-            player_longitude=int(lng))
+            player_latitude=float(lat),
+            player_longitude=float(lng))
         encounter_result = req.check_challenge()
         encounter_result = req.get_hatched_eggs()
         encounter_result = req.get_inventory()
