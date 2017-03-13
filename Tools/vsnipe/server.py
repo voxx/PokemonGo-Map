@@ -16,7 +16,6 @@ from pgoapi import utilities as util
 
 sys.path.append("/RocketMap/")
 from pogom.utils import generate_device_info
-from pogom.transform import jitter_location
 
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
@@ -58,10 +57,9 @@ def login(api):
 
     return dict(data=rv)
 
-def map_request(api, position, no_jitter=False):
-    # Create scan_location to send to the api based off of position, because
-    # tuples aren't mutable.
-    scan_location = jitter_location(position)
+def map_request(api, position):
+    # Create scan_location to send to the api based off of position, because tuples aren't mutable.
+    scan_location = position
 
     try:
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
