@@ -140,6 +140,7 @@ def vsnipe():
     sid = request.forms.get('sid')
     lat = request.forms.get('lat')
     lng = request.forms.get('lng')
+    pid = request.forms.get('pid')
 
     api = initApi(lat, lng)
     user = login(api)
@@ -152,7 +153,9 @@ def vsnipe():
     for cell in cells:
         wild_pokemon += cell.get('wild_pokemons', [])
     
-    print(wild_pokemon)
+    for pokemon in wild_pokemon:
+        if pid in pokemon['pokemon_id']:
+            print(pokemon)
     time.sleep(5)
     response = encounter(api, eid, sid, lat, lng)
 
