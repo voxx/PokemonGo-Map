@@ -14,7 +14,7 @@ from pgoapi.utilities import f2i
 from pgoapi import utilities as util
 
 sys.path.append("/RocketMap/")
-from pogom.utils import generate_device_info, get_cell_ids
+from pogom.utils import generate_device_info
 
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
