@@ -60,8 +60,8 @@ def encounter(api, eid, sid, lat, lng):
         encounter_result = req.encounter(
             encounter_id=eid,
             spawn_point_id=sid,
-            player_latitude=lat,
-            player_longitude=lng)
+            player_latitude=int(lat),
+            player_longitude=int(lng))
         encounter_result = req.check_challenge()
         encounter_result = req.get_hatched_eggs()
         encounter_result = req.get_inventory()
@@ -69,6 +69,8 @@ def encounter(api, eid, sid, lat, lng):
         encounter_result = req.download_settings()
         encounter_result = req.get_buddy_walked()
         encounter_result = req.call()
+
+        print(encounter_result)
 
         if (encounter_result is not None and 'wild_pokemon' in encounter_result['responses']['ENCOUNTER']):
             pokemon_info = encounter_result['responses']['ENCOUNTER']['wild_pokemon']['pokemon_data']
@@ -112,10 +114,10 @@ def vsnipe():
     response = encounter(api, eid, sid, lat, lng)
 
     try:
-        if 'cp' in response:
+        if response is not False:
             pokemon = response
         else:
-            pokemon = False
+            pokemon = response
         rv = [{'pokemon': str(pokemon)}]
     except KeyError, e:
         rv = [{'error': str(e)}]
