@@ -145,7 +145,7 @@ def vsnipe():
     api = initApi(lat, lng)
     user = login(api)
     
-    position = [float(lat), float(lng)]
+    position = [float(lat), float(lng), float(6.66)]
     scan = map_request(api, position)
     response = encounter(api, eid, sid, lat, lng)
 
