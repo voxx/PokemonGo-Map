@@ -89,14 +89,14 @@ def map_request(api, position, no_jitter=False):
         print('Exception while downloading map: %s', repr(e))
     return False
 
-def encounter(api, eid, sid, lat, lng):
+def encounter(api, eid, sid, lat, lng, tth):
     try:
         req = api.create_request()
         encounter_result = req.encounter(
             encounter_id=b64encode(str(eid)),
             spawn_point_id=str(sid),
-            player_latitude=float(lat),
-            player_longitude=float(lng))
+            player_latitude=lat,
+            player_longitude=lng)
         #encounter_result = req.check_challenge()
         #encounter_result = req.get_hatched_eggs()
         #encounter_result = req.get_inventory()
@@ -114,7 +114,7 @@ def encounter(api, eid, sid, lat, lng):
                 'pokemon_id': pid,
                 'latitude': lat,
                 'longitude': lng,
-                'disappear_time': disappear_time,
+                'disappear_time': tth,
                 'individual_attack': pokemon_info.get('individual_attack', 0),
                 'individual_defense': pokemon_info.get('individual_defense', 0),
                 'individual_stamina': pokemon_info.get('individual_stamina', 0),
@@ -155,9 +155,10 @@ def vsnipe():
     
     for pokemon in wild_pokemon:
         if pokemon['pokemon_data']['pokemon_id'] == int(pid):
-            print(pokemon)
+            response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pokemon['time_til_hidden_ms'])
+            print(response)
     time.sleep(5)
-    response = encounter(api, eid, sid, lat, lng)
+    #response = encounter(api, eid, sid, lat, lng)
 
     try:
         if response is not False:
