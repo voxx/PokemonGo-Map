@@ -100,7 +100,7 @@ def encounter(api, eid, sid, lat, lng):
     return False
 
 @route('/vsnipe/', method = 'POST')
-def vsnipe(provider):
+def vsnipe():
     eid = request.forms.get('eid')
     sid = request.forms.get('sid')
     lat = request.forms.get('lat')
