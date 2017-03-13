@@ -147,6 +147,8 @@ def vsnipe():
     
     position = [float(lat), float(lng), float(6.66)]
     scan = map_request(api, position)
+    print(scan)
+    time.sleep(5)
     response = encounter(api, eid, sid, lat, lng)
 
     try:
