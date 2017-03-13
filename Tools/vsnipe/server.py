@@ -143,8 +143,10 @@ def vsnipe():
         wild_pokemon += cell.get('wild_pokemons', [])
     
     response = False
+    print(wild_pokemon)
+    
     for pokemon in wild_pokemon:
-        if (pokemon['pokemon_data']['pokemon_id'] == int(pid) ):
+        if pokemon['pokemon_data']['pokemon_id'] == int(pid):
             time.sleep(10)
             #response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pid, pokemon['time_till_hidden_ms'])
             response = encounter(api, pokemon['encounter_id'], pokemon['spawn_point_id'], lat, lng, pid, pokemon['time_till_hidden_ms'])
