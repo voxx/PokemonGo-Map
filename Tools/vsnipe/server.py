@@ -4,29 +4,45 @@
 import time
 import json
 import os
+import sys
 
 from bottle import run, post, request, response, get, route
 
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
 
+sys.path.append("/RocketMap/")
+from pogom.utils import generate_device_info
+
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
     config = json.load(json_data_file)
 
-prot = config['server']['protocol']
 host = config['server']['host']
 port = int(config['server']['port'])
+hkey = config['hash_key']['key']
+accounts = config['accounts']
 
-def initApi():
-    location = [float(config['location']['lat']), float(config['location']['long'])]
+def initApi(lat, lng):
+    location = [float(lat), float(lng)]
 
-    api = PGoApi()
+    device_info = generate_device_info()
+    api = PGoApi(device_info=device_info)
+
+    if 'True' in config['hash_key']['enabled']:
+        print('Using key {} for this request.'.format(hkey))
+        api.activate_hash_server(hkey)
+
     api.set_position(*location)
 
     return api
 
-def login(provider, username, password, api):
+def login(api):
+    
+    username = config['accounts']['username']
+    password = config['accounts']['password']
+    provider = config['accounts']['provider']
+    
     try:
         api.set_authentication(
             provider=provider,
@@ -38,63 +54,69 @@ def login(provider, username, password, api):
 
     return dict(data=rv)
 
-def checkChallenge(api):
+def encounter(api, eid, sid, lat, lng):
     try:
         req = api.create_request()
-        response = req.check_challenge()
-        response = req.get_inventory()
-        response = req.call()
-        return response
+        encounter_result = req.encounter(
+            encounter_id=eid,
+            spawn_point_id=sid,
+            player_latitude=lat,
+            player_longitude=lng)
+        encounter_result = req.check_challenge()
+        encounter_result = req.get_hatched_eggs()
+        encounter_result = req.get_inventory()
+        encounter_result = req.check_awarded_badges()
+        encounter_result = req.download_settings()
+        encounter_result = req.get_buddy_walked()
+        encounter_result = req.call()
+
+        if (encounter_result is not None and 'wild_pokemon' in encounter_result['responses']['ENCOUNTER']):
+            pokemon_info = encounter_result['responses']['ENCOUNTER']['wild_pokemon']['pokemon_data']
+
+            pokemon = {
+                'encounter_id': b64encode(str(eid)),
+                'spawnpoint_id': sid,
+                'pokemon_id': pid,
+                'latitude': lat,
+                'longitude': lng,
+                'disappear_time': disappear_time,
+                'individual_attack': pokemon_info.get('individual_attack', 0),
+                'individual_defense': pokemon_info.get('individual_defense', 0),
+                'individual_stamina': pokemon_info.get('individual_stamina', 0),
+                'move_1': pokemon_info['move_1'],
+                'move_2': pokemon_info['move_2'],
+                'height': pokemon_info['height_m'],
+                'weight': pokemon_info['weight_kg'],
+                'gender': pokemon_info['pokemon_display']['gender'],
+                'cp': pokemon_info['cp']
+            }
+        else:
+            pokemon = False
+
+        return pokemon
 
     except Exception as e:
         return e
+    return False
 
-def verifyChallenge(token, api):
-    try:
-        response = api.verify_challenge(token=token)
-        return response
+@route('/vsnipe/', method = 'POST')
+def vsnipe(provider):
+    eid = request.forms.get('eid')
+    sid = request.forms.get('sid')
+    lat = request.forms.get('lat')
+    lng = request.forms.get('lng')
 
-    except Exception as e:
-        return e
-
-@route('/check/<provider>/', method = 'POST')
-def check(provider):
-    username   = request.forms.get('username')
-    password   = request.forms.get('password')
-
-    api = initApi()
-    user = login(provider, username, password, api)
-    response = checkChallenge(api)
+    api = initApi(lat, lng)
+    user = login(api)
+    
+    response = encounter(api, eid, sid, lat, lng)
 
     try:
-        if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
-            show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
-            challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
+        if 'cp' in response:
+            pokemon = response
         else:
-            show_challenge = False
-            challenge_url = False    
-        rv = [{'challenge_url': challenge_url}, {'show_challenge': show_challenge}]
-    except KeyError, e:
-        rv = [{'error': str(e)}]
-
-    return dict(data=rv)
-
-@route('/verify/<provider>/', method = 'POST')
-def verify(provider):
-    username	= request.forms.get('username')
-    password	= request.forms.get('password')
-    token	= request.forms.get('token')
-
-    api = initApi()
-    user = login(provider, username, password, api)
-    response = verifyChallenge(token, api)
-
-    try:
-        if 'success' in response['responses']['VERIFY_CHALLENGE']:
-	    success = response['responses']['VERIFY_CHALLENGE']['success']
-        else:
-            success = False
-        rv = [{'success': success}]
+            pokemon = False
+        rv = [{'pokemon': str(pokemon)}]
     except KeyError, e:
         rv = [{'error': str(e)}]
 

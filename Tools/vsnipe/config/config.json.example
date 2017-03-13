@@ -1,12 +1,14 @@
 {
     "server":{
-	"protocol":"http://",
         "host":"subdomain.domain.com",
         "port":"14441"
     },
-    "location":{
-        "lat":"0",
-        "long":"0",
-        "alt":"0"
+    "hash_key":{
+        "key":""
+    }
+    "accounts":{
+        "provider":"",
+        "username":"",
+        "password":""
     }
 }
