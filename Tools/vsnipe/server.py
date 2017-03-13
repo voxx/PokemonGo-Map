@@ -156,7 +156,7 @@ def vsnipe():
     for pokemon in wild_pokemon:
         if pokemon['pokemon_data']['pokemon_id'] == int(pid):
             time.sleep(5)
-            response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pokemon['time_till_hidden_ms'])
+            response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pid, pokemon['time_till_hidden_ms'])
             print(response)
     #response = encounter(api, eid, sid, lat, lng)
 
