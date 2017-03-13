@@ -133,7 +133,7 @@ def vsnipe():
 
     api = initApi(lat, lng)
     user = login(api)
-    
+    time.sleep(10)
     position = [float(lat), float(lng), float(6.66)]
     map_dict = map_request(api, position)
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
