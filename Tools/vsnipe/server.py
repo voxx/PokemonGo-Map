@@ -92,8 +92,8 @@ def encounter(api, eid, sid, lat, lng):
     try:
         req = api.create_request()
         encounter_result = req.encounter(
-            encounter_id=eid,
-            spawn_point_id=sid,
+            encounter_id=b64encode(str(eid)),
+            spawn_point_id=str(sid),
             player_latitude=float(lat),
             player_longitude=float(lng))
         encounter_result = req.check_challenge()
