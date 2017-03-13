@@ -61,12 +61,7 @@ def login(api):
 def map_request(api, position, no_jitter=False):
     # Create scan_location to send to the api based off of position, because
     # tuples aren't mutable.
-    if no_jitter:
-        # Just use the original coordinates.
-        scan_location = position
-    else:
-        # Jitter it, just a little bit.
-        scan_location = jitter_location(position)
+    scan_location = jitter_location(position)
 
     try:
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
@@ -76,12 +71,12 @@ def map_request(api, position, no_jitter=False):
                                        longitude=f2i(scan_location[1]),
                                        since_timestamp_ms=timestamps,
                                        cell_id=cell_ids)
-        #response = req.check_challenge()
+        response = req.check_challenge()
         #response = req.get_hatched_eggs()
         #response = req.get_inventory()
         #response = req.check_awarded_badges()
         #response = req.download_settings()
-        response = req.get_buddy_walked()
+        #response = req.get_buddy_walked()
         response = req.call()
         return response
 
@@ -94,15 +89,9 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
         req = api.create_request()
         encounter_result = req.encounter(
             encounter_id=eid,
-            spawn_point_id=str(sid),
+            spawn_point_id=sid,
             player_latitude=lat,
             player_longitude=lng)
-        #encounter_result = req.check_challenge()
-        #encounter_result = req.get_hatched_eggs()
-        #encounter_result = req.get_inventory()
-        #encounter_result = req.check_awarded_badges()
-        #encounter_result = req.download_settings()
-        #encounter_result = req.get_buddy_walked()
         encounter_result = req.call()
 
         if (encounter_result is not None and 'wild_pokemon' in encounter_result['responses']['ENCOUNTER']):
@@ -136,8 +125,8 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
 
 @route('/vsnipe/', method = 'POST')
 def vsnipe():
-    eid = request.forms.get('eid')
-    sid = request.forms.get('sid')
+    #eid = request.forms.get('eid')
+    #sid = request.forms.get('sid')
     lat = request.forms.get('lat')
     lng = request.forms.get('lng')
     pid = request.forms.get('pid')
@@ -154,17 +143,17 @@ def vsnipe():
         wild_pokemon += cell.get('wild_pokemons', [])
     
     for pokemon in wild_pokemon:
-        if pokemon['pokemon_data']['pokemon_id'] == int(pid):
-            time.sleep(5)
-            response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pid, pokemon['time_till_hidden_ms'])
+        if (pokemon['pokemon_data']['pokemon_id'] == int(pid) ):
+            time.sleep(10)
+            #response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pid, pokemon['time_till_hidden_ms'])
+            response = encounter(api, pokemon['encounter_id'], pokemon['spawn_point_id'], lat, lng, pid, pokemon['time_till_hidden_ms'])
             print(response)
-    #response = encounter(api, eid, sid, lat, lng)
 
     try:
         if response is not False:
             pokemon = response
         else:
-            pokemon = response
+            pokemon = False
         rv = [{'pokemon': str(pokemon)}]
     except KeyError, e:
         rv = [{'error': str(e)}]
