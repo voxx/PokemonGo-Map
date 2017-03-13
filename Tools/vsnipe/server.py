@@ -10,9 +10,11 @@ from bottle import run, post, request, response, get, route
 
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
+from pgoapi.utilities import f2i
+from pgoapi import utilities as util
 
 sys.path.append("/RocketMap/")
-from pogom.utils import generate_device_info
+from pogom.utils import generate_device_info, get_cell_ids
 
 fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
@@ -53,6 +55,37 @@ def login(api):
         rv = [{'auth_status':'fail', 'error':str(e)}]
 
     return dict(data=rv)
+
+def map_request(api, position, no_jitter=False):
+    # Create scan_location to send to the api based off of position, because
+    # tuples aren't mutable.
+    if no_jitter:
+        # Just use the original coordinates.
+        scan_location = position
+    else:
+        # Jitter it, just a little bit.
+        scan_location = jitter_location(position)
+
+    try:
+        cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
+        timestamps = [0, ] * len(cell_ids)
+        req = api.create_request()
+        response = req.get_map_objects(latitude=f2i(scan_location[0]),
+                                       longitude=f2i(scan_location[1]),
+                                       since_timestamp_ms=timestamps,
+                                       cell_id=cell_ids)
+        response = req.check_challenge()
+        response = req.get_hatched_eggs()
+        response = req.get_inventory()
+        response = req.check_awarded_badges()
+        response = req.download_settings()
+        response = req.get_buddy_walked()
+        response = req.call()
+        return response
+
+    except Exception as e:
+        log.warning('Exception while downloading map: %s', repr(e))
+    return False
 
 def encounter(api, eid, sid, lat, lng):
     try:
@@ -111,6 +144,8 @@ def vsnipe():
     api = initApi(lat, lng)
     user = login(api)
     
+    position = [float(lat), float(lng)]
+    request = map_request(api, position)
     response = encounter(api, eid, sid, lat, lng)
 
     try:
