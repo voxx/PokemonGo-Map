@@ -89,7 +89,7 @@ def map_request(api, position, no_jitter=False):
         print('Exception while downloading map: %s', repr(e))
     return False
 
-def encounter(api, eid, sid, lat, lng, tth):
+def encounter(api, eid, sid, lat, lng, pid, tth):
     try:
         req = api.create_request()
         encounter_result = req.encounter(
