@@ -24,11 +24,9 @@ with open(fn) as json_data_file:
 
 host = config['server']['host']
 port = int(config['server']['port'])
-hkey = config['hash_key']['key']
-accounts = config['accounts']
-account = random.choice(accounts)
-print(account)
-sys.exit()
+
+account = random.choice(config['accounts'])
+hkey = random.choice(config['hash_key'])
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
@@ -36,20 +34,20 @@ def initApi(lat, lng):
     device_info = generate_device_info()
     api = PGoApi(device_info=device_info)
 
-    if 'True' in config['hash_key']['enabled']:
-        print('Using key {} for this request.'.format(hkey))
-        api.activate_hash_server(hkey)
+    if 'True' in hkey['enabled']:
+        print('Using key {} for this request.'.format(hkey['key']))
+        api.activate_hash_server(hkey['key'])
 
     api.set_position(*location)
 
     return api
 
 def login(api):
-    
-    username = config['accounts']['username']
-    password = config['accounts']['password']
-    provider = config['accounts']['provider']
-    
+
+    provider = account['provider']
+    username = account['username']
+    password = account['password']
+
     try:
         api.set_authentication(
             provider=provider,
@@ -140,13 +138,13 @@ def vsnipe():
     map_dict = map_request(api, position)
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     wild_pokemon = []
-    
+
     for cell in cells:
         wild_pokemon += cell.get('wild_pokemons', [])
-    
+
     response = False
     print(wild_pokemon)
-    
+
     for pokemon in wild_pokemon:
         if pokemon['pokemon_data']['pokemon_id'] == int(pid):
             time.sleep(10)
