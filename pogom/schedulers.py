@@ -1034,9 +1034,8 @@ class SpeedScan(HexSearch):
 
             # It seems that the best solution is not to interfere with the
             # item if the queue has been refreshed since scanning
-            if self.queues[0][status['queue_version']] self.queue_version:
-                log.info('Step item %d has changed since queue refresh',
-                         item['step'])
+            if self.queues[0][status['queue_version']] != self.queue_version:
+                log.info('Step item %d has changed since queue refresh', step)
                 return
             item = self.queues[0][status['index_of_queue_item']]
             safety_buffer = item['end'] - scan_secs
@@ -1044,6 +1043,7 @@ class SpeedScan(HexSearch):
             if item['kind'] == 'spawn':
                 start_secs -= self.args.spawn_delay
             start_delay = (scan_secs - start_secs) % 3600
+            safety_buffer = item['end'] - seconds_within_band
             if safety_buffer < 0:
                 log.warning('Too late by %d sec for a %s at step %d', -
                             safety_buffer, item['kind'], item['step'])
