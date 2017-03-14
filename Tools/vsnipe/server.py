@@ -4,6 +4,7 @@
 import time
 import json
 import os
+import random
 import sys
 
 from bottle import run, post, request, response, get, route
@@ -25,6 +26,9 @@ host = config['server']['host']
 port = int(config['server']['port'])
 hkey = config['hash_key']['key']
 accounts = config['accounts']
+account = random.choice(accounts)
+print(account)
+sys.exit()
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
