@@ -48,6 +48,7 @@ import itertools
 import logging
 import math
 import geopy
+from geopy.distance import vincenty
 import json
 import time
 import sys
@@ -482,6 +483,7 @@ class SpeedScan(HexSearch):
         self.next_band_date = self.refresh_date
         self.location_change_date = datetime.utcnow()
         self.queues = [[]]
+        self.queue_version = 0
         self.ready = False
         self.empty_hive = False
         self.spawns_found = 0
@@ -668,6 +670,7 @@ class SpeedScan(HexSearch):
         now_date = datetime.utcnow()
         self.refresh_date = now_date
         self.refresh_ms = now_date.minute * 60 + now_date.second
+        self.queue_version += 1
         old_q = deepcopy(self.queues[0])
         queue = []
 
@@ -966,25 +969,13 @@ class SpeedScan(HexSearch):
             except IndexError:
                 messages['wait'] = ('Search aborting.'
                                     + ' Overseer refreshing queue.')
-                return -1, 0, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages
 
             if best['score'] == 0:
                 if cant_reach:
                     messages['wait'] = ('Not able to reach any scan'
                                         + ' under the speed limit.')
-                return -1, 0, 0, 0, 0, messages
-
-            if best['step'] != item['step']:
-                messages['wait'] = ('Item step has changed since chosen')
-                return -1, 0, 0, 0, 0, messages
-
-            if best['loc'] != item['loc']:
-                messages['wait'] = ('Item location has changed since chosen')
-                return -1, 0, 0, 0, 0, messages
-
-            if best['start'] != item['start']:
-                messages['wait'] = ('Item start has changed since chosen')
-                return -1, 0, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages
 
             distance = equi_rect_distance(loc, worker_loc)
             if (distance >
@@ -1002,7 +993,7 @@ class SpeedScan(HexSearch):
                 messages['wait'] = 'Moving {}m to step {} for a {}.'.format(
                     int(distance * 1000), step,
                     best['kind'])
-                return -1, 0, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages
 
             prefix += ' Step %d,' % (step)
 
@@ -1014,12 +1005,12 @@ class SpeedScan(HexSearch):
             if item.get('done', False):
                 messages['wait'] = ('Skipping step {}. Other worker already ' +
                                     'scanned.').format(step)
-                return -1, 0, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages
 
             if not self.ready:
                 messages['wait'] = ('Search aborting.'
                                     + ' Overseer refreshing queue.')
-                return -1, 0, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages
 
             # If a new band, set the date to wait until for the next band.
             if best['kind'] == 'band' and best['end'] - best['start'] > 5 * 60:
@@ -1029,27 +1020,25 @@ class SpeedScan(HexSearch):
             # Mark scanned
             item['done'] = 'Scanned'
             status['index_of_queue_item'] = i
+            status['queue_version'] = self.queue_version
 
             messages['search'] = 'Scanning step {} for a {}.'.format(
                 best['step'], best['kind'])
-            return best['step'], best['loc'], best['start'], 0, 0, messages
+            return best['step'], best['loc'], 0, 0, messages
 
-    def task_done(self, status, step, step_location, step_start, parsed=False):
+    def task_done(self, status, step, step_location, parsed=False):
         if parsed:
             # Record delay between spawn time and scanning for statistics
             # This now holds the actual time of scan in seconds
             scan_secs = parsed['scan_secs']
 
-            # I need some help here, if the queue has changed since the scan
-            # the item is different, can we search queue to find the originally
-            # item? I have no idae on syntax?
-            item = self.queues[0][status['index_of_queue_item']]
-            if item['step'] != step or item['start'] != step_start or (
-                    item['loc'] != step_location):
-                log.info('Step item has changed since queue refresh')
-                log.info('Putting back step %d in queue', item['step'])
+            # It seems that the best solution is not to interfere with the
+            # item if the queue has been refreshed since scanning
+            if self.queues[0][status['queue_version']] self.queue_version:
+                log.info('Step item %d has changed since queue refresh',
+                         item['step'])
                 return
-
+            item = self.queues[0][status['index_of_queue_item']]
             safety_buffer = item['end'] - scan_secs
             start_secs = item['start']
             if item['kind'] == 'spawn':

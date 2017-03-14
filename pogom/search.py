@@ -878,7 +878,7 @@ def search_worker_thread(args, account_queue, account_failures,
                         break
 
                 # Grab the next thing to search (when available).
-                step, step_location, step_start, appears, leaves, messages = (
+                step, step_location, appears, leaves, messages = (
                     scheduler.next_item(status))
                 status['message'] = messages['wait']
 
@@ -996,8 +996,7 @@ def search_worker_thread(args, account_queue, account_failures,
 
                     parsed = parse_map(args, response_dict, step_location,
                                        dbq, whq, api, scan_date)
-                    scheduler.task_done(status, step, step_location,
-                                        step_start, parsed)
+                    scheduler.task_done(status, step, step_location, parsed)
                     if parsed['count'] > 0:
                         status['success'] += 1
                         consecutive_noitems = 0
