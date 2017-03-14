@@ -4,11 +4,11 @@
         "port":"14441"
     },
     "hash_key":{
-        "key":""
+	"enabled":"False","key":"",
+	"enabled":"False","key":""
     },
     "accounts":{
-        "provider":"",
-        "username":"",
-        "password":""
+        "provider":"","username":"","password":"",
+	"provider":"","username":"","password":""
     }
 }
