@@ -997,7 +997,7 @@ def search_worker_thread(args, account_queue, account_failures,
 
                     parsed = parse_map(args, response_dict, step_location,
                                        dbq, whq, api, scan_date)
-                    scheduler.task_done(status, step, step_location, parsed)
+                    scheduler.task_done(status, parsed)
                     if parsed['count'] > 0:
                         status['success'] += 1
                         consecutive_noitems = 0

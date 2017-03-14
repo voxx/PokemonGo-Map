@@ -1025,7 +1025,7 @@ class SpeedScan(HexSearch):
                 best['step'], best['kind'])
             return best['step'], best['loc'], 0, 0, messages
 
-    def task_done(self, status, step, step_location, parsed=False):
+    def task_done(self, status, parsed=False):
         if parsed:
             # Record delay between spawn time and scanning for statistics
             # This now holds the actual time of scan in seconds
@@ -1034,7 +1034,7 @@ class SpeedScan(HexSearch):
             # It seems that the best solution is not to interfere with the
             # item if the queue has been refreshed since scanning
             if status['queue_version'] != self.queue_version:
-                log.info('Step item %d has changed since queue refresh', step)
+                log.info('Step item has changed since queue refresh')
                 return
             item = self.queues[0][status['index_of_queue_item']]
             safety_buffer = item['end'] - scan_secs
