@@ -48,7 +48,6 @@ import itertools
 import logging
 import math
 import geopy
-from geopy.distance import vincenty
 import json
 import time
 import sys
@@ -1043,7 +1042,7 @@ class SpeedScan(HexSearch):
             if item['kind'] == 'spawn':
                 start_secs -= self.args.spawn_delay
             start_delay = (scan_secs - start_secs) % 3600
-            safety_buffer = item['end'] - seconds_within_band
+            safety_buffer = item['end'] - scan_secs
             if safety_buffer < 0:
                 log.warning('Too late by %d sec for a %s at step %d', -
                             safety_buffer, item['kind'], item['step'])

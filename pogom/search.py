@@ -537,6 +537,7 @@ def search_overseer_thread(args, new_location_queue, pause_bit, heartb,
                     i].get_overseer_message()
 
         # Let's update the total stats and add that info to message
+        # Added exception handler as dict items change
         try:
             update_total_stats(threadStatus, last_account_status)
         except Exception as e:
