@@ -1033,7 +1033,7 @@ class SpeedScan(HexSearch):
 
             # It seems that the best solution is not to interfere with the
             # item if the queue has been refreshed since scanning
-            if self.queues[0][status['queue_version']] != self.queue_version:
+            if status['queue_version'] != self.queue_version:
                 log.info('Step item %d has changed since queue refresh', step)
                 return
             item = self.queues[0][status['index_of_queue_item']]
