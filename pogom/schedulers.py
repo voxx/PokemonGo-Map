@@ -1036,9 +1036,18 @@ class SpeedScan(HexSearch):
 
     def task_done(self, status, step, step_location, step_start, parsed=False):
         if parsed:
-            # Record delay between spawn time and scanning for statistics
             # This now holds the actual time of scan in seconds
             scan_secs = parsed['scan_secs']
+            # Record delay between spawn time and scanning for statistics
+            now_secs = date_secs(datetime.utcnow())
+            item = self.queues[0][status['index_of_queue_item']]
+            seconds_within_band = (
+                int((datetime.utcnow() - self.refresh_date).total_seconds()) +
+                self.refresh_ms)
+            enforced_delay = (self.args.spawn_delay if item['kind'] == 'spawn'
+                              else 0)
+            start_delay = seconds_within_band - item['start'] + enforced_delay
+            safety_buffer = item['end'] - seconds_within_band
 
             # I need some help here, if the queue has changed since the scan
             # the item is different, can we search queue to find the originally
