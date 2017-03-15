@@ -27,11 +27,9 @@ port = int(config['server']['port'])
 
 accounts = config['accounts']
 random.shuffle(accounts)
-account = random.choice(accounts)
 
 hkeys = config['hash_key']
 random.shuffle(hkeys)
-hkey = random.choice(hkeys)
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
@@ -39,6 +37,7 @@ def initApi(lat, lng):
     device_info = generate_device_info()
     api = PGoApi(device_info=device_info)
 
+    hkey = random.choice(hkeys)
     if 'True' in hkey['enabled']:
         print('Using key {} for this request.'.format(hkey['key']))
         api.activate_hash_server(hkey['key'])
@@ -49,6 +48,7 @@ def initApi(lat, lng):
 
 def login(api):
 
+    account = random.choice(accounts)
     provider = account['provider']
     username = account['username']
     password = account['password']
