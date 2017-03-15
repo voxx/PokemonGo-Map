@@ -25,11 +25,12 @@ with open(fn) as json_data_file:
 host = config['server']['host']
 port = int(config['server']['port'])
 
-accounts = random.shuffle(config['accounts'])
-account = random.choice(accounts)
+accounts = config['accounts']
+print(accounts)
+account = random.choice(random.shuffle(accounts))
 
-hkeys = random.shuffle(config['hash_key'])
-hkey = random.choice(hkeys)
+hkeys = config['hash_key']
+hkey = random.choice(random.shuffle(hkeys))
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
