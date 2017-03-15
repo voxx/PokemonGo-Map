@@ -27,7 +27,6 @@ port = int(config['server']['port'])
 
 accounts = config['accounts']
 random.shuffle(accounts)
-print(accounts)
 account = random.choice(accounts)
 
 hkeys = config['hash_key']
