@@ -149,7 +149,7 @@ def vsnipe():
 
     response = False
     for pokemon in wild_pokemon:
-        if (pokemon['pokemon_data']['pokemon_id']) == int(pid) and (pokemon['pokemon_data']['latitude'] == float(lat)) and (pokemon['pokemon_data']['longitude'] == float(lng)):
+        if (pokemon['pokemon_data']['pokemon_id']) == int(pid) and (pokemon['latitude'] == float(lat)) and (pokemon['longitude'] == float(lng)):
             response = encounter(api, pokemon['encounter_id'], pokemon['spawn_point_id'], lat, lng, pid, pokemon['time_till_hidden_ms'])
             print(response)
 
