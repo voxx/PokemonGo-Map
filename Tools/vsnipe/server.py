@@ -47,7 +47,8 @@ def login(api):
     provider = account['provider']
     username = account['username']
     password = account['password']
-
+    print('Using account {} for this request.'.format(account['username']))
+    
     try:
         api.set_authentication(
             provider=provider,
@@ -62,7 +63,8 @@ def login(api):
 def map_request(api, position):
     # Create scan_location to send to the api based off of position, because tuples aren't mutable.
     scan_location = position
-
+    print('Using location {} for this request.'.format(str(position)))
+    
     try:
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
         timestamps = [0, ] * len(cell_ids)
@@ -134,23 +136,21 @@ def vsnipe():
     api = initApi(lat, lng)
     user = login(api)
     time.sleep(10)
+    
     position = [float(lat), float(lng), float(6.66)]
     map_dict = map_request(api, position)
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
+    
     wild_pokemon = []
-
     for cell in cells:
         wild_pokemon += cell.get('wild_pokemons', [])
+    print("DEBUG: " + wild_pokemon)
 
     response = False
-    print(wild_pokemon)
-
     for pokemon in wild_pokemon:
-        if pokemon['pokemon_data']['pokemon_id'] == int(pid):
-            time.sleep(10)
-            #response = encounter(api, pokemon['encounter_id'], sid, lat, lng, pid, pokemon['time_till_hidden_ms'])
+        if (pokemon['pokemon_data']['pokemon_id']) == int(pid) and (pokemon['pokemon_data']['latitude'] == float(lat)) and (pokemon['pokemon_data']['longitude'] == float(lng)):
             response = encounter(api, pokemon['encounter_id'], pokemon['spawn_point_id'], lat, lng, pid, pokemon['time_till_hidden_ms'])
-            print(response)
+            print("DEBUG: " + response)
 
     try:
         if response is not False:

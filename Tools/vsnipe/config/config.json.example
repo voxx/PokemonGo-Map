@@ -1,11 +1,10 @@
 {
     "server": {
-        "host":"subdomain.domain.com",
+        "host":"sub.domain.tld",
         "port":"14441"
     },
     "hash_key": [
-	{ "enabled":"False", "key":"",
-	{ "enabled":"False", "key":""
+	{ "enabled":"False", "key":"" }
     ],
     "accounts": [
         { "provider":"", "username":"", "password":"" },
