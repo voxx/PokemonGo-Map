@@ -25,8 +25,11 @@ with open(fn) as json_data_file:
 host = config['server']['host']
 port = int(config['server']['port'])
 
-account = random.choice(config['accounts'])
-hkey = random.choice(config['hash_key'])
+accounts = config['accounts']
+account = random.choice(accounts)
+
+hkeys = config['hash_key']
+hkey = random.choice(hkeys)
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
