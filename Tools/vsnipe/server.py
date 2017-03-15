@@ -26,11 +26,13 @@ host = config['server']['host']
 port = int(config['server']['port'])
 
 accounts = config['accounts']
+random.shuffle(accounts)
 print(accounts)
-account = random.choice(random.shuffle(accounts))
+account = random.choice(accounts)
 
 hkeys = config['hash_key']
-hkey = random.choice(random.shuffle(hkeys))
+random.shuffle(hkeys)
+hkey = random.choice(hkeys)
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
@@ -52,7 +54,7 @@ def login(api):
     username = account['username']
     password = account['password']
     print('Using account {} for this request.'.format(account['username']))
-    
+
     try:
         api.set_authentication(
             provider=provider,
@@ -68,7 +70,7 @@ def map_request(api, position):
     # Create scan_location to send to the api based off of position, because tuples aren't mutable.
     scan_location = position
     print('Using location {} for this request.'.format(str(position)))
-    
+
     try:
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
         timestamps = [0, ] * len(cell_ids)
@@ -141,10 +143,10 @@ def vsnipe():
     api = initApi(lat, lng)
     user = login(api)
     time.sleep(5)
-    
+
     map_dict = map_request(api, position)
     time.sleep(5)
-    
+
     wild_pokemon = []
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
