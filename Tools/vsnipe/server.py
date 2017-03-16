@@ -107,7 +107,7 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
 
             pokemon = {
                 'encounter_id': str(eid),
-                'spawnpoint_id': sid,
+                'spawnpoint_id': str(sid),
                 'pokemon_id': pid,
                 'latitude': lat,
                 'longitude': lng,
