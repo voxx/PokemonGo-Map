@@ -106,7 +106,7 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
             pokemon_info = encounter_result['responses']['ENCOUNTER']['wild_pokemon']['pokemon_data']
 
             pokemon = {
-                'encounter_id': b64encode(str(eid)),
+                'encounter_id': str(eid),
                 'spawnpoint_id': sid,
                 'pokemon_id': pid,
                 'latitude': lat,
