@@ -1,5 +1,6 @@
 {
     "server": {
+	"protocol":"http",
         "host":"sub.domain.tld",
         "port":"14441"
     },

@@ -92,6 +92,7 @@ def map_request(api, position):
     return False
 
 def encounter(api, eid, sid, lat, lng, pid, tth):
+    print('Using pid {} for this request.'.format(pid))
     try:
         req = api.create_request()
         encounter_result = req.encounter(
