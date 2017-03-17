@@ -105,6 +105,14 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
         if (encounter_result is not None and 'wild_pokemon' in encounter_result['responses']['ENCOUNTER']):
             pokemon_info = encounter_result['responses']['ENCOUNTER']['wild_pokemon']['pokemon_data']
 
+            level = 0
+            cpm = pokemon_info['cp_multiplier']
+            if cpm < 0.734:
+                level = 58.35178527 * cpm * cpm - 2.838007664 * cpm + 0.8539209906
+            else:
+                level = 171.0112688 * cpm - 95.20425243
+            level = (round(level) * 2) / 2.0
+
             pokemon = {
                 'encounter_id': str(eid),
                 'spawnpoint_id': str(sid),
@@ -120,7 +128,8 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
                 'height': pokemon_info['height_m'],
                 'weight': pokemon_info['weight_kg'],
                 'gender': pokemon_info['pokemon_display']['gender'],
-                'cp': pokemon_info['cp']
+                'cp': pokemon_info['cp'],
+                'level': level
             }
         else:
             pokemon = False
@@ -133,8 +142,6 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
 
 @route('/vsnipe/', method = 'POST')
 def vsnipe():
-    #eid = request.forms.get('eid')
-    #sid = request.forms.get('sid')
     lat = request.forms.get('lat')
     lng = request.forms.get('lng')
     pid = request.forms.get('pid')
