@@ -55,17 +55,21 @@ def checkChallenge(api):
         response = req.check_challenge()
         response = req.get_inventory()
         response = req.call()
+        print(response) #DEBUG
         return response
 
     except Exception as e:
+        print(e) #DEBUG
         return e
 
 def verifyChallenge(token, api):
     try:
         response = api.verify_challenge(token=token)
+        print(response) #DEBUG
         return response
 
     except Exception as e:
+        print(e) #DEBUG
         return e
 
 @route('/check/<provider>/', method = 'POST')
@@ -82,6 +86,7 @@ def check(provider):
         rv = [{'error': str(user)}]
         return dict(data=rv)
 
+    print()
     try:
         if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
