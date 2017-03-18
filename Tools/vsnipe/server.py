@@ -111,7 +111,7 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
                 level = 58.35178527 * cpm * cpm - 2.838007664 * cpm + 0.8539209906
             else:
                 level = 171.0112688 * cpm - 95.20425243
-            level = (round(level) * 2) / 2.0
+            level = int((round(level) * 2) / 2.0)
 
             pokemon = {
                 'encounter_id': str(eid),
