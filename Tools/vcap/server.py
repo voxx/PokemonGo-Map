@@ -46,7 +46,7 @@ def login(provider, username, password, api):
         rv = [{'auth_status':'success'}]
     except AuthException as e:
         rv = [{'auth_status':'fail', 'error':str(e)}]
-
+    print(rv) #DEBUG
     return dict(data=rv)
 
 def checkChallenge(api):
@@ -86,7 +86,7 @@ def check(provider):
         rv = [{'error': str(user)}]
         return dict(data=rv)
 
-    print()
+    print(response) #DEBUG
     try:
         if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
