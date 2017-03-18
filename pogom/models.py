@@ -1472,6 +1472,7 @@ class SpawnpointDetectionData(BaseModel):
         for s in query:
             if s['tth_secs'] is not None:
                 tth_found = True
+                tth_secs = (s['tth_secs'] - 1) % 3600
 
         # To reduce CPU usage, give an intial reading of 15 minute spawns if
         # not done with initial scan of location.
@@ -1494,7 +1495,10 @@ class SpawnpointDetectionData(BaseModel):
         old_kind = str(sp['kind'])
         # Make a sorted list of the seconds after the hour.
         seen_secs = sorted(map(lambda x: date_secs(x['scan_time']), query))
-
+        # Include and entry for the TTH if it found
+        if tth_found:
+            seen_secs.append(tth_secs)
+            seen_secs.sort()
         # Add the first seen_secs to the end as a clock wrap around.
         if seen_secs:
             seen_secs.append(seen_secs[0] + 3600)
