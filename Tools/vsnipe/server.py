@@ -147,8 +147,6 @@ def vsnipe():
     lng = request.forms.get('lng')
     pid = request.forms.get('pid')
     position = [float(lat), float(lng), float(random.uniform(102.1, 249.7))]
-
-    api = initApi(lat, lng)
     
     attempts = 0
     error = False
@@ -156,6 +154,7 @@ def vsnipe():
         attempts += 1
         try:
             if attempts <= 2:
+                api = initApi(lat, lng)
                 user = login(api)
                 time.sleep(5)
 
@@ -169,7 +168,7 @@ def vsnipe():
             time.sleep(5)
 
     if error == True:
-        rv = [{'error': 'Request failed after {} attempts!'.filter(str(attempts))}]
+        rv = [{'error': 'Request failed after {} attempts!'.format(str(attempts))}]
         return dict(data=rv)
 
     wild_pokemon = []
