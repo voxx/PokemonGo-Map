@@ -62,7 +62,6 @@ def checkChallenge(api):
         response = req.check_challenge()
         response = req.get_inventory()
         response = req.call()
-        print(response) #DEBUG
         return response
 
     except Exception as e:
@@ -72,7 +71,6 @@ def checkChallenge(api):
 def verifyChallenge(token, api):
     try:
         response = api.verify_challenge(token=token)
-        print(response) #DEBUG
         return response
 
     except Exception as e:
@@ -93,7 +91,6 @@ def check(provider):
         rv = [{'error': str(user)}]
         return dict(data=rv)
 
-    print(response) #DEBUG
     try:
         if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
