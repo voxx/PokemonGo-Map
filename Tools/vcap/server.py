@@ -4,6 +4,7 @@
 import time
 import json
 import os
+import random
 import sys
 
 from bottle import run, post, request, response, get, route
@@ -21,7 +22,9 @@ with open(fn) as json_data_file:
 prot = config['server']['protocol']
 host = config['server']['host']
 port = int(config['server']['port'])
-hkey = config['hash_key']['key']
+
+hkeys = config['hash_key']
+random.shuffle(hkeys)
 
 def initApi():
     location = [float(config['location']['lat']), float(config['location']['long'])]
@@ -29,15 +32,18 @@ def initApi():
     device_info = generate_device_info()
     api = PGoApi(device_info=device_info)
 
-    if 'True' in config['hash_key']['enabled']:
-        print('Using key {} for this request.'.format(hkey))
-        api.activate_hash_server(hkey)
+    hkey = random.choice(hkeys)
+    if 'True' in hkey['enabled']:
+        print('Using key {} for this request.'.format(hkey['key']))
+        api.activate_hash_server(hkey['key'])
 
     api.set_position(*location)
 
     return api
 
 def login(provider, username, password, api):
+    print('Using account {} for this request.'.format(username))
+    
     try:
         api.set_authentication(
             provider=provider,
