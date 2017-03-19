@@ -27,8 +27,8 @@ hkeys = config['hash_key']
 random.shuffle(hkeys)
 
 def initApi():
-    location = [float(config['location']['lat']), float(config['location']['long'])]
-
+    location = [float(config['location']['lat']), float(config['location']['lng'])]
+    print('Using location {} for this request.'.format(str(location)))
     device_info = generate_device_info()
     api = PGoApi(device_info=device_info)
 
@@ -42,7 +42,7 @@ def initApi():
     return api
 
 def login(provider, username, password, api):
-    print('Using account {} for this request.'.format(username))
+    print('Using account {} and password {} for this request.'.format(username, password))
     
     try:
         api.set_authentication(
