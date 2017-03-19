@@ -8,7 +8,6 @@ import random
 import sys
 
 from bottle import run, post, request, response, get, route
-from base64 import b64encode
 
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
