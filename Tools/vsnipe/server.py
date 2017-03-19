@@ -10,7 +10,7 @@ import sys
 from bottle import run, post, request, response, get, route
 
 from pgoapi import PGoApi
-from pgoapi.exceptions import AuthException
+from pgoapi.exceptions import AuthException, NotLoggedInException
 from pgoapi.utilities import f2i
 from pgoapi import utilities as util
 
@@ -58,8 +58,10 @@ def login(api):
             provider=provider,
             username=username,
             password=password)
+        print('Login successful for user {}.'.format(account['username']))
         rv = [{'auth_status':'success'}]
     except AuthException as e:
+        print('Login failed for user {}. Error: {}'.format(account['username'], str(e)))
         rv = [{'auth_status':'fail', 'error':str(e)}]
 
     return dict(data=rv)
@@ -147,11 +149,28 @@ def vsnipe():
     position = [float(lat), float(lng), float(random.uniform(102.1, 249.7))]
 
     api = initApi(lat, lng)
-    user = login(api)
-    time.sleep(5)
+    
+    attempts = 0
+    error = False
+    while True:
+        attempts += 1
+        try:
+            if attempts <= 2:
+                user = login(api)
+                time.sleep(5)
 
-    map_dict = map_request(api, position)
-    time.sleep(5)
+                map_dict = map_request(api, position)
+                time.sleep(5)
+            else:
+                error = True
+                break
+        except NotLoggedInException as e:
+            print ("Request {} failed! Error: {}".format(attempts, str(e)))
+            time.sleep(5)
+
+    if error == True:
+        rv = [{'error': 'Request failed after {} attempts!'.filter(str(attempts))}]
+        return dict(data=rv)
 
     wild_pokemon = []
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
