@@ -42,8 +42,9 @@ def initApi():
     return api
 
 def login(provider, username, password, api):
-    print('Using account {} and password {} for this request.'.format(username, password))
-    
+    print('Using account {} for this request.'.format(username))
+    print('Using password {} for this request.'.format(password))
+    print('Using provider {} for this request.'.format(provider))
     try:
         api.set_authentication(
             provider=provider,
