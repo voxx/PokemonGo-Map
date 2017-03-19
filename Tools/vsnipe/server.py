@@ -148,28 +148,13 @@ def vsnipe():
     pid = request.forms.get('pid')
     position = [float(lat), float(lng), float(random.uniform(102.1, 249.7))]
     
-    attempts = 0
-    error = False
-    while True:
-        attempts += 1
-        try:
-            if attempts <= 2:
-                api = initApi(lat, lng)
-                user = login(api)
-                time.sleep(5)
+    api = initApi(lat, lng)
 
-                map_dict = map_request(api, position)
-                time.sleep(5)
-            else:
-                error = True
-                break
-        except NotLoggedInException as e:
-            print ("Request {} failed! Error: {}".format(attempts, str(e)))
-            time.sleep(5)
+    user = login(api)
+    time.sleep(5)
 
-    if error == True:
-        rv = [{'error': 'Request failed after {} attempts!'.format(str(attempts))}]
-        return dict(data=rv)
+    map_dict = map_request(api, position)
+    time.sleep(5)
 
     wild_pokemon = []
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
