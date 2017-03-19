@@ -139,7 +139,7 @@ class BaseScheduler(object):
                         'abandoning location.').format(step_location[0],
                                                        step_location[1])
         }
-        return step, step_location, appears, leaves, messages
+        return step, step_location, appears, leaves, messages, 0
 
     # How long to delay since last action
     def delay(self, *args):
@@ -992,7 +992,12 @@ class SpeedScan(HexSearch):
                 messages['wait'] = 'Moving {}m to step {} for a {}.'.format(
                     int(distance * 1000), step,
                     best['kind'])
-                return -1, 0, 0, 0, messages
+                # So we wait while the worker arrives at the destination
+                # But we don't want to sleep too long or the item might get
+                # taken by another worker
+                if secs_to_arrival > 179 - self.args.scan_delay:
+                    secs_to_arrival = 179 - self.args.scan_delay
+                return -1, 0, 0, 0, messages, secs_to_arrival
 
             prefix += ' Step %d,' % (step)
 
@@ -1004,12 +1009,12 @@ class SpeedScan(HexSearch):
             if item.get('done', False):
                 messages['wait'] = ('Skipping step {}. Other worker already ' +
                                     'scanned.').format(step)
-                return -1, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages, 0
 
             if not self.ready:
                 messages['wait'] = ('Search aborting.'
                                     + ' Overseer refreshing queue.')
-                return -1, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages, 0
 
             # If a new band, set the date to wait until for the next band.
             if best['kind'] == 'band' and best['end'] - best['start'] > 5 * 60:
@@ -1023,7 +1028,7 @@ class SpeedScan(HexSearch):
 
             messages['search'] = 'Scanning step {} for a {}.'.format(
                 best['step'], best['kind'])
-            return best['step'], best['loc'], 0, 0, messages
+            return best['step'], best['loc'], 0, 0, messages, 0
 
     def task_done(self, status, parsed=False):
         if parsed:

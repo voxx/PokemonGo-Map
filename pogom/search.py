@@ -879,9 +879,12 @@ def search_worker_thread(args, account_queue, account_failures,
                         break
 
                 # Grab the next thing to search (when available).
-                step, step_location, appears, leaves, messages = (
+                step, step_location, appears, leaves, messages, wait = (
                     scheduler.next_item(status))
                 status['message'] = messages['wait']
+                # The next_item will return the value telling us how long
+                # to sleep. This way the status can be updated
+                time.sleep(wait)
 
                 # Using step as a flag for no valid next location returned.
                 if step == -1:
@@ -1127,7 +1130,7 @@ def search_worker_thread(args, account_queue, account_failures,
                     time.strftime(
                         '%H:%M:%S',
                         time.localtime(time.time() + args.scan_delay)))
-
+                log.info(status['message'])
                 time.sleep(delay)
 
         # Catch any process exceptions, log them, and continue the thread.
