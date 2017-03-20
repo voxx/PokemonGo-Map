@@ -158,7 +158,7 @@ def vsnipe():
     api = initApi(lat, lng)
 
     user = login(api)
-    if "failed" in user['data']['auth_status']:
+    if "auth_status" in user['data'][0] and "failed" in user['data'][0]['auth_status']:
         return user
     else:
         time.sleep(5)
