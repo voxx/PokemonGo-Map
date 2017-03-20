@@ -6,6 +6,7 @@ import json
 import os
 import random
 import sys
+import logging
 
 from bottle import run, post, request, response, get, route
 
@@ -21,6 +22,7 @@ fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
     config = json.load(json_data_file)
 
+log = logging.getLogger(__name__)
 host = config['server']['host']
 port = int(config['server']['port'])
 
@@ -38,7 +40,7 @@ def initApi(lat, lng):
 
     hkey = random.choice(hkeys)
     if 'True' in hkey['enabled']:
-        print('Using key {} for this request.'.format(hkey['key']))
+        log.info('Using key {} for this request.'.format(hkey['key']))
         api.activate_hash_server(hkey['key'])
 
     api.set_position(*location)
@@ -51,25 +53,32 @@ def login(api):
     provider = account['provider']
     username = account['username']
     password = account['password']
-    print('Using account {} for this request.'.format(account['username']))
+    log.info('Using account {} for this request.'.format(account['username']))
 
-    try:
-        api.set_authentication(
-            provider=provider,
-            username=username,
-            password=password)
-        print('Login successful for user {}.'.format(account['username']))
-        rv = [{'auth_status':'success'}]
-    except AuthException as e:
-        print('Login failed for user {}. Error: {}'.format(account['username'], str(e)))
-        rv = [{'auth_status':'fail', 'error':str(e)}]
+    # Try to login. Repeat up to two times, but don't get stuck here.
+    num_tries = 0
+    while num_tries < 2:
+        try:
+            api.set_authentication(
+                provider=provider,
+                username=username,
+                password=password)
+            log.info('Login successful for account {}.'.format(account['username']))
+            rv = [{'auth_status':'success'}]
+        except AuthException as e:
+            num_tries += 1
+            log.error('Login failed for account {}. Trying again in 30 seconds. Error: {}'.format(account['username'], str(e)))
+            rv = [{'auth_status':'fail', 'error':str(e)}]
+            time.sleep(30)
 
-    return dict(data=rv)
+        if num_tries > 2:
+            log.error(('Failed to login to account %s in %d tries. Giving up.'),account['username'], num_tries)
+        return dict(data=rv)
 
 def map_request(api, position):
     # Create scan_location to send to the api based off of position, because tuples aren't mutable.
     scan_location = position
-    print('Using location {} for this request.'.format(str(position)))
+    log.info('Using location {} for this request.'.format(str(position)))
 
     try:
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
@@ -89,7 +98,7 @@ def map_request(api, position):
         return response
 
     except Exception as e:
-        print('Exception while downloading map: %s', repr(e))
+        log.error('Exception while downloading map: %s', repr(e))
     return False
 
 def encounter(api, eid, sid, lat, lng, pid, tth):
@@ -160,13 +169,13 @@ def vsnipe():
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         wild_pokemon += cell.get('wild_pokemons', [])
-    print(wild_pokemon)
+    log.info('Map request returned {}.'.format(str(wild_pokemon)))
 
     response = False
     for pokemon in wild_pokemon:
         if (pokemon['pokemon_data']['pokemon_id']) == int(pid) and (str(pokemon['latitude']).find(str(lat)) != -1) and (str(pokemon['longitude']).find(str(lng)) != -1):
             response = encounter(api, pokemon['encounter_id'], pokemon['spawn_point_id'], lat, lng, pid, pokemon['time_till_hidden_ms'])
-            print(response)
+            log.info('Encounter request returned {}.'.format(str(response)))
 
     try:
         if response is not False:
