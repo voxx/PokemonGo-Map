@@ -71,7 +71,8 @@ def login(api):
 
         if num_tries > 2:
             print(('Failed to login to account %s in %d tries. Giving up.'),account['username'], num_tries)
-        return dict(data=rv)
+
+    return dict(data=rv)
 
 def map_request(api, position):
     # Create scan_location to send to the api based off of position, because tuples aren't mutable.
