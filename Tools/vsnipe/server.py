@@ -46,7 +46,6 @@ def initApi(lat, lng):
     return api
 
 def login(api):
-
     account = random.choice(accounts)
     provider = account['provider']
     username = account['username']
@@ -63,19 +62,20 @@ def login(api):
                 password=password)
             print('Login successful for account {}.'.format(account['username']))
             rv = [{'auth_status':'success'}]
+            break
         except AuthException as e:
             num_tries += 1
             print('Login failed for account {}. Trying again in 30 seconds. Error: {}'.format(account['username'], str(e)))
             rv = [{'auth_status':'fail', 'error':str(e)}]
             time.sleep(30)
 
-        if num_tries > 2:
+        if num_tries >= 2:
             print(('Failed to login to account %s in %d tries. Giving up.'),account['username'], num_tries)
 
     return dict(data=rv)
 
 def map_request(api, position):
-    # Create scan_location to send to the api based off of position, because tuples aren't mutable.
+    # Create scan_location to send to the api based off of position.
     scan_location = position
     print('Using location {} for this request.'.format(str(position)))
 
