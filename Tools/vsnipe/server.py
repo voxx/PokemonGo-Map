@@ -76,7 +76,7 @@ def login(api):
 def map_request(api, position):
     # Create scan_location to send to the api based off of position, because tuples aren't mutable.
     scan_location = position
-    pting('Using location {} for this request.'.format(str(position)))
+    print('Using location {} for this request.'.format(str(position)))
 
     try:
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
