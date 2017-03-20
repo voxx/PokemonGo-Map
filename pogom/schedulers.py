@@ -968,13 +968,13 @@ class SpeedScan(HexSearch):
             except IndexError:
                 messages['wait'] = ('Search aborting.'
                                     + ' Overseer refreshing queue.')
-                return -1, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages, 0
 
             if best['score'] == 0:
                 if cant_reach:
                     messages['wait'] = ('Not able to reach any scan'
                                         + ' under the speed limit.')
-                return -1, 0, 0, 0, messages
+                return -1, 0, 0, 0, messages, 0
 
             distance = equi_rect_distance(loc, worker_loc)
             if (distance >
@@ -997,7 +997,7 @@ class SpeedScan(HexSearch):
                 # taken by another worker
                 if secs_to_arrival > 179 - self.args.scan_delay:
                     secs_to_arrival = 179 - self.args.scan_delay
-                return -1, 0, 0, 0, messages, secs_to_arrival
+                return -1, 0, 0, 0, messages, max(secs_to_arrival, 0)
 
             prefix += ' Step %d,' % (step)
 
