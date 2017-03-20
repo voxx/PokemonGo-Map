@@ -70,7 +70,7 @@ def login(api):
             time.sleep(30)
 
     if num_tries >= 2:
-        print(('Failed to login to account %s in %d tries. Giving up.'),account['username'], num_tries)
+        print(('Failed to login to account {} after {} attempts. Giving up.').format(account['username'], num_tries))
 
     return dict(data=rv)
 
@@ -159,7 +159,7 @@ def vsnipe():
     api = initApi(lat, lng)
 
     user = login(api)
-    if "auth_status" in user['data'][0] and "failed" in user['data'][0]['auth_status']:
+    if "auth_status" in user['data'][0] and "fail" in user['data'][0]['auth_status']:
         return user
     else:
         time.sleep(5)
