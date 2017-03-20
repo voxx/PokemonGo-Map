@@ -69,8 +69,8 @@ def login(api):
             rv = [{'auth_status':'fail', 'error':str(e)}]
             time.sleep(30)
 
-        if num_tries >= 2:
-            print(('Failed to login to account %s in %d tries. Giving up.'),account['username'], num_tries)
+    if num_tries >= 2:
+        print(('Failed to login to account %s in %d tries. Giving up.'),account['username'], num_tries)
 
     return dict(data=rv)
 
