@@ -1293,7 +1293,7 @@ class SpawnPoint(BaseModel):
         start = sp['earliest_unseen'] - (4 - plus_or_minus) * 900 + spawn_delay
         no_tth_adjust = 60 if not links_arg and not cls.tth_found(sp) else 0
         end = sp['latest_seen'] - (3 - links.index('-')) * 900 + no_tth_adjust
-        return [start % 3600, (end - 1) % 3600]
+        return [start % 3600, end % 3600]
 
     # Return a list of dicts with the next spawn times.
     @classmethod
@@ -1816,7 +1816,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
         # the database.
         query = (Pokemon
                  .select(Pokemon.encounter_id, Pokemon.spawnpoint_id)
-                 .where((Pokemon.disappear_time > datetime.utcnow()) &
+                 .where((Pokemon.disappear_time >= now_date) &
                         (Pokemon.encounter_id << encounter_ids))
                  .dicts())
 
