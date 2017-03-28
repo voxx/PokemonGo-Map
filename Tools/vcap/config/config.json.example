@@ -1,16 +1,14 @@
 {
-    "server":{
-	"protocol":"http://",
-        "host":"subdomain.domain.com",
-        "port":"13331"
-    },
-    "location":{
-        "lat":"0",
-        "long":"0",
-        "alt":"0"
-    },
-    "hash_key":{
-	"enabled":"True",
-	"key":""
-    }
+  "server": {
+    "protocol":"http",
+    "host":"sub.domain.tld",
+    "port":"13331"
+  },
+  "hash_key": [
+    { "enabled":"False", "key":"" }
+  ],
+  "location": {
+    "lat":"0",
+    "long":"0"
+  }
 }

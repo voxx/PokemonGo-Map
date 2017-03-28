@@ -75,7 +75,6 @@ def login(api):
     return dict(data=rv)
 
 def map_request(api, position):
-    # Create scan_location to send to the api based off of position.
     scan_location = position
     print('Using location {} for this request.'.format(str(position)))
 
@@ -88,11 +87,6 @@ def map_request(api, position):
                                        since_timestamp_ms=timestamps,
                                        cell_id=cell_ids)
         response = req.check_challenge()
-        #response = req.get_hatched_eggs()
-        #response = req.get_inventory()
-        #response = req.check_awarded_badges()
-        #response = req.download_settings()
-        #response = req.get_buddy_walked()
         response = req.call()
         return response
 
@@ -101,7 +95,6 @@ def map_request(api, position):
     return False
 
 def encounter(api, eid, sid, lat, lng, pid, tth):
-    print('Using pid {} for this request.'.format(pid))
     try:
         req = api.create_request()
         encounter_result = req.encounter(
@@ -173,9 +166,11 @@ def vsnipe():
         wild_pokemon += cell.get('wild_pokemons', [])
     print('Map request returned {}.'.format(str(wild_pokemon)))
 
+    print('Checking for pokemon id {} in map response object.'.format(pid))
     response = False
     for pokemon in wild_pokemon:
         if (pokemon['pokemon_data']['pokemon_id']) == int(pid) and (str(pokemon['latitude']).find(str(lat)) != -1) and (str(pokemon['longitude']).find(str(lng)) != -1):
+            print('Found pokemon id {} in map response object. Starting encounter.'.format(pid))
             response = encounter(api, pokemon['encounter_id'], pokemon['spawn_point_id'], lat, lng, pid, pokemon['time_till_hidden_ms'])
             print('Encounter request returned {}.'.format(str(response)))
 
@@ -184,6 +179,7 @@ def vsnipe():
             pokemon = response
         else:
             pokemon = False
+            print('Pokemon id {} was not found.'.format(pid))
         rv = [{'pokemon': str(pokemon)}]
     except KeyError, e:
         rv = [{'error': str(e)}]

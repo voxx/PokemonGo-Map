@@ -19,7 +19,6 @@ fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
 with open(fn) as json_data_file:
     config = json.load(json_data_file)
 
-prot = config['server']['protocol']
 host = config['server']['host']
 port = int(config['server']['port'])
 
