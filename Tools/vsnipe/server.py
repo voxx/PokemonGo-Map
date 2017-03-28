@@ -155,7 +155,7 @@ def vsnipe():
     lng = request.forms.get('lng')
     pid = request.forms.get('pid')
     position = [float(lat), float(lng), float(random.uniform(102.1, 249.7))]
-    
+
     api = initApi(lat, lng)
 
     user = login(api)

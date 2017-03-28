@@ -8,7 +8,7 @@
 	{ "enabled":"False", "key":"" }
     ],
     "accounts": [
-        { "provider":"", "username":"", "password":"" },
+	{ "provider":"", "username":"", "password":"" },
 	{ "provider":"", "username":"", "password":"" }
     ]
 }
