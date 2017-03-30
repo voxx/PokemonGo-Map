@@ -3,22 +3,23 @@
 
 import time
 import json
-import os
 import random
 import sys
 
-from bottle import run, post, request, response, get, route
+from bottle import run, post, request, response, route
+from os.path import dirname, abspath, join
 
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException, NotLoggedInException
 from pgoapi.utilities import f2i
 from pgoapi import utilities as util
 
-sys.path.append("/RocketMap/")
+rm = abspath(dirname(dirname(dirname(abspath(__file__))))) # Path to RocketMap
+sys.path.append(rm)
 from pogom.utils import generate_device_info
 
-fn = os.path.join(os.path.dirname(__file__), 'config/config.json')
-with open(fn) as json_data_file:
+vsc = join(abspath(join(__file__, os.pardir)), 'config/config.json') # Path to VSnipe Config
+with open(vsc) as json_data_file:
     config = json.load(json_data_file)
 
 host = config['server']['host']
