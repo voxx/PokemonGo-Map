@@ -914,8 +914,7 @@ class SpeedScan(HexSearch):
                 distance = equi_rect_distance(loc, worker_loc)
                 secs_to_arrival = distance / self.args.kph * 3600
                 secs_waited = (now_date - last_action).total_seconds()
-                secs_to_arrival = (secs_to_arrival - secs_waited) if (
-                    secs_waited < secs_to_arrival) else 0
+                secs_to_arrival = max(secs_to_arrival - secs_waited, 0)
                 if ms + secs_to_arrival < item['start']:
                     continue
 
