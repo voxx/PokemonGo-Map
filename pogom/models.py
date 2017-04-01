@@ -1778,10 +1778,11 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     # Consolidate the individual lists in each cell into two lists of Pokemon
     # and a list of forts.
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
-    for cell in cells:
+    for i, cell in enumerate(cells):
         # If we have map responses then use the time from the request
-        now_date = datetime.utcfromtimestamp(
-            cell['current_timestamp_ms'] / 1000)
+        if i == 0:
+            now_date = datetime.utcfromtimestamp(
+                                cell['current_timestamp_ms'] / 1000)
         nearby_pokemon += cell.get('nearby_pokemons', [])
         # Parse everything for stats (counts).  Future enhancement -- we don't
         # necessarily need to know *how many* forts/wild/nearby were found but
