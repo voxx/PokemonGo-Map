@@ -1,18 +1,16 @@
-# DO NOT USE NOTEPAD TO EDIT CONFIG FILES!! USE NOTEPAD ++ INSTEAD.
+# DO NOT USE NOTEPAD OR ANY RICH TEXT EDITOR TO EDIT CONFIG FILES!! USE NOTEPAD ++ INSTEAD.
 
 # Database settings
-#db-type: sqlite        # sqlite (default) is fine for tutorial - delete /RocketMap/pogom.db after running it
+db-type: sqlite         # sqlite (default) is fine for tutorial - delete /RocketMap/pogom.db after running it
+clear-db: true          # Deletes the existing database before starting the Webserver. [env var: POGOMAP_CLEAR_DB]
 
 # Search settings
-#location:		# Set this location next to a known Pokestop
+#location:              # Set this location next to a known Pokestop
 no-gyms: true           # disables gym scanning (default false)
 scan-delay: 20          # default 10
 step-limit: 1           # default 12
 max-failures: 5         # Maximum number of failures to parse locations before an account will go into a sleep for #account-rest-interval seconds (0 to disable), (default 5)
 max-empty: 5            # Maximum number of empty scans before an account will go into a sleep for #account-rest-interval seconds. Reasonable to use with proxies (0 to disable), (default 0)
-
-# Misc
-#gmaps-key:             # Your Google Maps API key
 
 # Misc
 no-server: true               # There is no need for a server when only completing tutorial
@@ -24,4 +22,4 @@ workers: 4                    # Number of workers to complete tutorial on at a t
 
 # Uncomment a line when you want to change its default value (Remove # at the beginning)
 # Please ensure to leave a space after the colon (:) (example setting: value)
-# Username, password, location and gmaps-key are required
+# location is required
