@@ -1972,6 +1972,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 pid = p['pokemon_data']['pokemon_id']
                 ditto_dex = [16, 19, 41, 129, 163, 161, 193]
+                catch_result = None
                 if int(pid) in ditto_dex:
                     log.info("{} may be a ditto. Triggering catch logic!".format(pid)
 
