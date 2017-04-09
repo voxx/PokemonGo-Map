@@ -10,7 +10,7 @@ def catch(api, eid, sid, pid):
     # Try to catch pokemon, but don't get stuck.
     attempts = 0
     while attempts < 4:
-        log.info("Starting attempt {} to catch {}!".format(attempt, pid)
+        log.info('Starting attempt %s to catch %s!', attempt, pid)
         try:
             req = api.create_request()
             catch_result = req.catch_pokemon(
@@ -29,36 +29,36 @@ def catch(api, eid, sid, pid):
                 # Success!
                 if catch_status == 1:
                     cpid = catch_result['responses']['CATCH_POKEMON']['captured_pokemon_id']
-                    log.info("Catch attempt {} was successful for pid: {}! It's cpid is {}.".format(attempt, pid, cpid)
+                    log.info('Catch attempt %s was successful for pid: %s! The cpid is %s.', attempt, pid, cpid)
                     rv = [{'catch_status':'success', 'cpid':cpid}]
                     break
 
                 # Broke free!
                 if catch_status == 2:
-                    log.info("Catch attempt {} failed for pid: {}. It broke free!".format(attempt, pid)
+                    log.info('Catch attempt %s failed for pid: %s. It broke free!', attempt, pid)
 
                 # Ran away!
                 if catch_status == 3:
-                    log.info("Catch attempt {} failed for pid: {}. It ran away!".format(attempt, pid)
+                    log.info('Catch attempt %s failed for pid: %s. It ran away!', attempt, pid)
                     rv = [{'catch_status':'ran'}]
                     break
 
                 # Dodged!
                 if catch_status == 4:
-                    log.info("Catch attempt {} failed for pid: {}. It dodged the ball!".format(attempt, pid)
+                    log.info('Catch attempt %s failed for pid: %s. It dodged the ball!', attempt, pid)
 
             else:
-                log.error("Catch attempt {} failed for pid: {}. The api response was empty!".format(attempt, pid)
+                log.error('Catch attempt %s failed for pid: %s. The api response was empty!', attempt, pid)
 
         except Exception as e:
-            log.error("Catch attempt {} failed for pid: {}. The api response returned an error!".format(attempt, pid)
+            log.error('Catch attempt %s failed for pid: %s. The api response returned an error!', attempt, pid)
             rv = [{'catch_status':'error', 'error':str(e)}]
 
         attempts += 1
         time.sleep(10)
 
     if attempts >= 4:
-        log.error(('Failed to catch pid: {} after {} attempts. Giving up.').format(pid, attempts))
+        log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, attempts)
         rv = [{'catch_status':'fail'}]
 
      dict(data=rv)
