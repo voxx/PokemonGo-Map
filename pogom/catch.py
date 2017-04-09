@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 def catch(api, eid, sid, pid):
     # Try to catch pokemon, but don't get stuck.
     attempts = 0
-    while attempts < 4:
+    while attempts < 3:
         log.info('Starting attempt %s to catch %s!', attempts, pid)
         try:
             req = api.create_request()
@@ -25,6 +25,7 @@ def catch(api, eid, sid, pid):
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
+                log.info('DEBUG: %s', str(catch_result))
                 catch_status = catch_result['responses']['CATCH_POKEMON']['status'];
                 # Success!
                 if catch_status == 1:
@@ -57,7 +58,7 @@ def catch(api, eid, sid, pid):
         attempts += 1
         time.sleep(10)
 
-    if attempts >= 4:
+    if attempts >= 3:
         log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, attempts)
         rv = [{'catch_status':'fail'}]
 

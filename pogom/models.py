@@ -1974,7 +1974,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 pid = p['pokemon_data']['pokemon_id']
                 ditto_dex = [16, 19, 41, 129, 163, 161, 193]
                 if int(pid) in ditto_dex:
-                    log.info('%s may be a ditto. Triggering catch logic!', pid)
+                    log.info('PID: %s may be a ditto. Triggering catch logic!', pid)
 
                     ditto_result = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
                     ditto_data = json.loads(ditto_result)
