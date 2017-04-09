@@ -61,4 +61,4 @@ def catch(api, eid, sid, pid):
         log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, attempts)
         rv = [{'catch_status':'fail'}]
 
-     dict(data=rv)
+    return dict(data=rv)
