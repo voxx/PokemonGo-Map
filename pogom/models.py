@@ -10,6 +10,7 @@ import gc
 import time
 import geopy
 import math
+import json
 from peewee import InsertQuery, \
     Check, CompositeKey, ForeignKeyField, \
     SmallIntegerField, IntegerField, CharField, DoubleField, BooleanField, \
