@@ -1978,7 +1978,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                     ditto_result = catch(api, str(p['encounter_id']), str(p['spawn_point_id']), pid)
                     ditto_data = json.loads(ditto_result)
-                    if 'catch_result' in catch_data['data'][0] and ditto_data['data'][0]['catch_result'] == 'success':
+                    if 'catch_result' in ditto_data['data'][0] and ditto_data['data'][0]['catch_result'] == 'success':
                         if int(ditto_data['data'][0]['cpid']) == 132:
                             pokemon[p['encounter_id']].update({
                                 'pokemon_id': cpid
