@@ -1975,9 +1975,9 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 ditto_dex = [16, 19, 41, 129, 163, 161, 193]
                 catch_result = None
                 if int(pid) in ditto_dex:
-                    log.info("{} may be a ditto. Triggering catch logic!".format(pid)
+                    log.info('%s may be a ditto. Triggering catch logic!', pid)
 
-                    catch_result = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
+                    catch_result = catch(api, str(p['encounter_id']), str(p['spawn_point_id']), pid)
                     catch_data = json.loads(catch_result)
                     if 'catch_result' in catch_data['data'][0] and catch_data['data'][0]['catch_result'] == 'success':
                         if int(catch_data['data'][0]['cpid']) == 132:
