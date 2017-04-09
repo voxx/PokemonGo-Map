@@ -33,6 +33,7 @@ from .utils import get_pokemon_name, get_pokemon_rarity, get_pokemon_types, \
 from .transform import transform_from_wgs_to_gcj, get_new_coords
 from .customLog import printPokemon
 from .account import tutorial_pokestop_spin
+from .catch import catch
 log = logging.getLogger(__name__)
 
 args = get_args()
@@ -1964,6 +1965,25 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     'weight': pokemon_info['weight_kg'],
                     'gender': pokemon_info['pokemon_display']['gender'],
                 })
+
+                # Check for DITTO
+                # Add logic to check for catch flag to enable/disable this check
+                # Add logic to check inventory for balls before proceeding
+
+                pid = p['pokemon_data']['pokemon_id']
+                ditto_dex = [16, 19, 41, 129, 163, 161, 193]
+                if int(pid) in ditto_dex:
+                    log.info("{} may be a ditto. Triggering catch logic!".format(pid)
+
+                    catch_result = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
+                    catch_data = json.loads(catch_result)
+                    if 'catch_result' in catch_data['data'][0] and catch_data['data'][0]['catch_result'] == 'success':
+                        if int(catch_data['data'][0]['cpid']) == 132:
+                            pokemon[p['encounter_id']].update({
+                                'pokemon_id': cpid
+                            })
+
+                        # Get inventory data, and send matching catch to candy grinder.
 
             if args.webhooks:
 
