@@ -89,9 +89,14 @@ def release(api, pid, cpid):
         release_result = req.call()
 
         if (release_result is not None and 'RELEASE_POKEMON' in release_result['responses']):
-            log.info('DEBUG: %s', release_result['responses']['RELEASE_POKEMON'])
+            #log.info('DEBUG: %s', release_result['responses']['RELEASE_POKEMON'])
             release_result = release_result['responses']['RELEASE_POKEMON']['result'];
-            log.info('DEBUG: %s', release_result)
+            # Success!
+            if int(release_result) == 1:
+                log.info('Successfully released pid: %s', pid)
+            else:
+                log.info('Falied to release pid: %s with result code: %s.', pid, release_result)
+                
     except Exception as e:
         log.error(e)
         return False
