@@ -180,7 +180,11 @@
 #version-check-interval:        # Interval to check API version in seconds (Default: in range [60, 300]).
 #mock:                          # Mock mode - point to a fpgo endpoint instead of using the real PogoApi,
                                 # ec: http://127.0.0.1:9090 (default='')
+
 # Account Manager API Settings
 #account-api-enabled:   # Enable Account Manager Api (true/false)
 #account-api-key:       # Account API Key (XXXXXXXXXXXXXXXX)
 #account-api-url:       # Account API Url (https://yourdomain.com/accounts/update)
+
+# Ditto Catch Settings
+#ditto: true            # Enable Account Manager Api (true/false) Default=false

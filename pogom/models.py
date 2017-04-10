@@ -10,7 +10,6 @@ import gc
 import time
 import geopy
 import math
-import json
 from peewee import InsertQuery, \
     Check, CompositeKey, ForeignKeyField, \
     SmallIntegerField, IntegerField, CharField, DoubleField, BooleanField, \
@@ -1968,28 +1967,24 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 })
 
                 # Check for DITTO
-                # Add logic to check for catch flag to enable/disable this check
-                # Add logic to check inventory for balls before proceeding
+                if args.ditto:
+                    # Add logic to check inventory for balls before proceeding
+                    pid = p['pokemon_data']['pokemon_id']
+                    ditto_dex = [16, 19, 41, 129, 163, 161, 193]
+                    if int(pid) in ditto_dex:
+                        log.info('PID: %s may be a ditto. Triggering catch logic!', pid)
 
-                pid = p['pokemon_data']['pokemon_id']
-                ditto_dex = [16, 19, 41, 129, 163, 161, 193]
-                if int(pid) in ditto_dex:
-                    log.info('PID: %s may be a ditto. Triggering catch logic!', pid)
-
-                    caught = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
-                    log.info('DEBUG: %s', caught)
-                    if 'catch_status' in caught['data'][0] and caught['data'][0]['catch_status'] == 'success':
-                        if int(caught['data'][0]['pid']) == 132:
-                            log.info('PID: %s is a ditto! Updating encounter data with new pokemon id and movesets.', pid)
-                            pokemon[p['encounter_id']].update({
-                                'pokemon_id': 132,
-                                'move_1': caught['data'][0]['m1'],
-                                'move_2': caught['data'][0]['m2']
-                            })
-                        else:
-                            log.info('PID: %s is not a ditto!', pid)
-
-                        # Get inventory data, and send matching catch to candy grinder.
+                        caught = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
+                        if 'catch_status' in caught['data'][0] and caught['data'][0]['catch_status'] == 'success':
+                            if int(caught['data'][0]['pid']) == 132:
+                                log.info('PID: %s is a ditto! Updating encounter data with new pokemon id and movesets.', pid)
+                                pokemon[p['encounter_id']].update({
+                                    'pokemon_id': 132,
+                                    'move_1': caught['data'][0]['m1'],
+                                    'move_2': caught['data'][0]['m2']
+                                })
+                            else:
+                                log.info('PID: %s is not a ditto!', pid)
 
             if args.webhooks:
 

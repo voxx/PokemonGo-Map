@@ -81,7 +81,7 @@ def catch(api, eid, sid, pid):
 
 def release(api, pid, cpid):
     try:
-        log.info('Releasing pid: %s', pid)
+        log.info('Attempting to release pid: %s', pid)
         req = api.create_request()
         release_result = req.release_pokemon(pokemon_id=cpid)
         release_result = req.check_challenge()
@@ -90,14 +90,15 @@ def release(api, pid, cpid):
 
         if (release_result is not None and 'RELEASE_POKEMON' in release_result['responses']):
             #log.info('DEBUG: %s', release_result['responses']['RELEASE_POKEMON'])
+
             release_result = release_result['responses']['RELEASE_POKEMON']['result'];
-            # Success!
             if int(release_result) == 1:
                 log.info('Successfully released pid: %s', pid)
             else:
-                log.info('Falied to release pid: %s with result code: %s.', pid, release_result)
-                
+                log.info('Failed to release pid: %s with result code: %s.', pid, release_result)
+
     except Exception as e:
-        log.error(e)
+        log.error('Exception occured while releasing pid: %s Error: %s', pid, str(e))
         return False
+
     return True
