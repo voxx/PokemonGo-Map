@@ -44,6 +44,7 @@ def catch(api, eid, sid, pid):
 
                     rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
 
+                    time.sleep(10)
                     released = release(api, pid, cpid)
 
                     break
