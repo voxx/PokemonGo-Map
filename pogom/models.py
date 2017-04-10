@@ -1983,7 +1983,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                     'move_1': caught['data'][0]['m1'],
                                     'move_2': caught['data'][0]['m2']
                                 })
-                                pokemon[p['encounter_id']]['ditto_id'] = pid
+                                p['pokemon_data']['ditto_id'] = pid
                             else:
                                 log.info('PID: %s is not a ditto!', pid)
 
