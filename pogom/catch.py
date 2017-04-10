@@ -10,7 +10,7 @@ def catch(api, eid, sid, pid):
     # Try to catch pokemon, but don't get stuck.
     attempts = 0
     while attempts < 3:
-        log.info('Starting attempt %s to catch %s!', attempts, pid)
+        log.info('Starting attempt %s to catch pid: %s!', attempts, pid)
         try:
             req = api.create_request()
             catch_result = req.catch_pokemon(

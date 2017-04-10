@@ -1976,14 +1976,13 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 if int(pid) in ditto_dex:
                     log.info('PID: %s may be a ditto. Triggering catch logic!', pid)
 
-                    ditto_result = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
-                    ditto_data = json.loads(ditto_result)
-                    if 'catch_result' in ditto_data['data'][0] and ditto_data['data'][0]['catch_result'] == 'success':
-                        if int(ditto_data['data'][0]['pid']) == 132:
+                    caught = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
+                    if 'catch_result' in caught['data'][0] and caught['data'][0]['catch_result'] == 'success':
+                        if int(cr['data'][0]['pid']) == 132:
                             pokemon[p['encounter_id']].update({
                                 'pokemon_id': 132,
-                                'move_1': ditto_data['data'][0]['m1'],
-                                'move_2': ditto_data['data'][0]['m2']
+                                'move_1': caught['data'][0]['m1'],
+                                'move_2': caught['data'][0]['m2']
                             })
 
                         # Get inventory data, and send matching catch to candy grinder.
