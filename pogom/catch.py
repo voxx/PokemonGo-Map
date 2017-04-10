@@ -26,7 +26,7 @@ def catch(api, eid, sid, pid):
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
-                log.info('DEBUG: %s', catch_result['responses']['CATCH_POKEMON'])
+                #log.info('DEBUG: %s', catch_result['responses']['CATCH_POKEMON'])
                 catch_status = catch_result['responses']['CATCH_POKEMON']['status'];
                 # Success!
                 if catch_status == 1:
