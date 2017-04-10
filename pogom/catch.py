@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 def catch(api, eid, sid, pid):
     # Try to catch pokemon, but don't get stuck.
-    attempts = 0
+    attempts = 1
     while attempts < 3:
         log.info('Starting attempt %s to catch pid: %s!', attempts, pid)
         try:
@@ -43,6 +43,9 @@ def catch(api, eid, sid, pid):
                             m2 = item['inventory_item_data']['pokemon_data']['move_2']
 
                     rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
+
+                    released = release(api, pid, cpid)
+
                     break
 
                 # Broke free!
@@ -74,3 +77,21 @@ def catch(api, eid, sid, pid):
         rv = [{'catch_status':'fail'}]
 
     return dict(data=rv)
+
+def release(api, pid, cpid):
+    try:
+        log.info('Releasing pid: %s', pid)
+        req = api.create_request()
+        release_result = req.release_pokemon(pokemon_id=cpid)
+        release_result = req.check_challenge()
+        release_result = req.get_inventory()
+        release_result = req.call()
+
+        if (release_result is not None and 'RELEASE_POKEMON' in release_result['responses']):
+            log.info('DEBUG: %s', release_result['responses']['RELEASE_POKEMON'])
+            release_result = release_result['responses']['RELEASE_POKEMON']['result'];
+            log.info('DEBUG: %s', release_result)
+    except Exception as e:
+        log.error(e)
+        return False
+    return True

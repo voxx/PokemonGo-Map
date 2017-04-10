@@ -1985,6 +1985,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                 'move_1': caught['data'][0]['m1'],
                                 'move_2': caught['data'][0]['m2']
                             })
+                        else:
+                            log.info('PID: %s is not a ditto!', pid)
 
                         # Get inventory data, and send matching catch to candy grinder.
 
