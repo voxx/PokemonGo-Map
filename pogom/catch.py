@@ -22,6 +22,7 @@ def catch(api, eid, sid, pid):
                 spin_modifier=1.0,
                 normalized_hit_position=1.0)
             catch_result = req.check_challenge()
+            catch_result = req.get_inventory()
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
@@ -30,8 +31,18 @@ def catch(api, eid, sid, pid):
                 # Success!
                 if catch_status == 1:
                     cpid = catch_result['responses']['CATCH_POKEMON']['captured_pokemon_id']
-                    log.info('Catch attempt %s was successful for pid: %s! The cpid is %s.', attempts, pid, cpid)
-                    rv = [{'catch_status':'success', 'cpid':cpid}]
+                    log.info('Catch attempt %s was successful for pid: %s! The cpid is %s.', attempts, pid, str(cpid))
+
+                    # Check inventory for new pokemon id and movesets
+                    iitems = catch_result['responses']['GET_INVENTORY']['inventory_delta']['inventory_items']
+                    for item in iitems:
+                        iidata = item['inventory_item_data']
+                        if str(cpid) in str(item):
+                            npid = item['inventory_item_data']['pokemon_data']['pokemon_id']
+                            m1 = item['inventory_item_data']['pokemon_data']['move_1']
+                            m2 = item['inventory_item_data']['pokemon_data']['move_2']
+
+                    rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
                     break
 
                 # Broke free!
