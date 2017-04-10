@@ -1968,6 +1968,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # Check for DITTO
                 if args.ditto:
+                    ditto = False
                     # Add logic to check inventory for balls before proceeding
                     pid = p['pokemon_data']['pokemon_id']
                     ditto_dex = [16, 19, 41, 129, 163, 161, 193]
@@ -1983,7 +1984,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                     'move_1': caught['data'][0]['m1'],
                                     'move_2': caught['data'][0]['m2']
                                 })
-                                p['pokemon_data']['ditto_id'] = pid
+                                ditto = True
                             else:
                                 log.info('PID: %s is not a ditto!', pid)
 
@@ -2000,6 +2001,11 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     'spawn_start': start_end[0],
                     'spawn_end': start_end[1]
                 })
+                # Send fake pokemon id to webhook as ditto_id
+                if args.ditto and ditto == True:
+                    wh_poke.update({
+                        'ditto_id': pid
+                    })
                 wh_update_queue.put(('pokemon', wh_poke))
 
     if forts and (config['parse_pokestops'] or config['parse_gyms']):
