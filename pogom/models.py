@@ -1945,8 +1945,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 'move_2': None,
                 'height': None,
                 'weight': None,
-                'gender': None,
-                'ditto_id': None
+                'gender': None
             }
 
             if (encounter_result is not None and 'wild_pokemon'
@@ -1982,9 +1981,9 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                 pokemon[p['encounter_id']].update({
                                     'pokemon_id': 132,
                                     'move_1': caught['data'][0]['m1'],
-                                    'move_2': caught['data'][0]['m2'],
-                                    'ditto_id': pid
+                                    'move_2': caught['data'][0]['m2']
                                 })
+                                pokemon[p['encounter_id']]['ditto_id'] = pid
                             else:
                                 log.info('PID: %s is not a ditto!', pid)
 
