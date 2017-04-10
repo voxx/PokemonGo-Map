@@ -1977,6 +1977,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     log.info('PID: %s may be a ditto. Triggering catch logic!', pid)
 
                     caught = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
+                    log.info('DEBUG: %s', caught)
                     if 'catch_result' in caught['data'][0] and caught['data'][0]['catch_result'] == 'success':
                         if int(caught['data'][0]['pid']) == 132:
                             log.info('PID: %s is a ditto! Updating encounter data with new pokemon id and movesets.', pid)
