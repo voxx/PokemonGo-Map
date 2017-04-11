@@ -58,8 +58,8 @@ def login(provider, username, password, api):
 def checkChallenge(api):
     try:
         req = api.create_request()
-        response = req.check_challenge()
-        response = req.get_inventory()
+        req.check_challenge()
+        req.get_inventory()
         response = req.call()
         return response
 
