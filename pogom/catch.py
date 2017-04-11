@@ -13,7 +13,7 @@ def catch(api, eid, sid, pid):
         log.info('Starting attempt %s to catch pid: %s!', attempts, pid)
         try:
             req = api.create_request()
-            catch_result = req.catch_pokemon(
+            req.catch_pokemon(
                 encounter_id=eid,
                 pokeball=1,
                 normalized_reticle_size=1.950,
@@ -21,8 +21,8 @@ def catch(api, eid, sid, pid):
                 hit_pokemon=1,
                 spin_modifier=1.0,
                 normalized_hit_position=1.0)
-            catch_result = req.check_challenge()
-            catch_result = req.get_inventory()
+            req.check_challenge()
+            req.get_inventory()
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
@@ -83,14 +83,13 @@ def release(api, pid, cpid):
     try:
         log.info('Attempting to release pid: %s', pid)
         req = api.create_request()
-        release_result = req.release_pokemon(pokemon_id=cpid)
-        release_result = req.check_challenge()
-        release_result = req.get_inventory()
+        req.release_pokemon(pokemon_id=cpid)
+        req.check_challenge()
+        req.get_inventory()
         release_result = req.call()
 
         if (release_result is not None and 'RELEASE_POKEMON' in release_result['responses']):
             #log.info('DEBUG: %s', release_result['responses']['RELEASE_POKEMON'])
-
             release_result = release_result['responses']['RELEASE_POKEMON']['result'];
             if int(release_result) == 1:
                 log.info('Successfully released pid: %s', pid)
