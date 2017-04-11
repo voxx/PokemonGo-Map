@@ -2002,10 +2002,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     'spawn_end': start_end[1]
                 })
                 # Send fake pokemon id to webhook as ditto_id
-                if args.ditto and ditto == True:
-                    wh_poke.update({
-                        'ditto_id': pid
-                    })
+                if args.ditto and ditto is True:
+                    wh_poke['ditto_id'] = int(pid)
                 wh_update_queue.put(('pokemon', wh_poke))
 
     if forts and (config['parse_pokestops'] or config['parse_gyms']):
