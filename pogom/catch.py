@@ -67,7 +67,7 @@ def catch(api, eid, sid, pid):
                 log.error('Catch attempt %s failed for pid: %s. The api response was empty!', attempts, pid)
 
         except Exception as e:
-            log.error('Catch attempt %s failed for pid: %s. The api response returned an error!', attempts, pid)
+            log.error('Catch attempt %s failed for pid: %s. The api response returned an error! Error: %s', attempts, pid, str(e))
             rv = [{'catch_status':'error', 'error':str(e)}]
 
         attempts += 1
