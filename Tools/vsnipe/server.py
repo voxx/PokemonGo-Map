@@ -167,6 +167,7 @@ def vsnipe():
     map_dict = map_request(api, position)
     if map_dict is not None and map_dict['status_code'] == 3:
         rv = [{'error':'banned'}]
+        print('Map request returned error: {}.'.format(str(rv)))
         return dict(data=rv)
     else:
         time.sleep(5)
