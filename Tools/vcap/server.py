@@ -62,7 +62,7 @@ def checkChallenge(api):
         response = req.check_challenge()
         response = req.get_inventory()
         response = req.call()
-        print('CheckChallenge DEBUG: {}.'.format(stream(response)))
+        print('CheckChallenge DEBUG: {}.'.format(str(response)))
         return response
 
     except Exception as e:
@@ -72,7 +72,7 @@ def checkChallenge(api):
 def verifyChallenge(token, api):
     try:
         response = api.verify_challenge(token=token)
-        print('VerifyChallenge DEBUG: {}.'.format(stream(response)))
+        print('VerifyChallenge DEBUG: {}.'.format(str(response)))
         return response
 
     except Exception as e:
