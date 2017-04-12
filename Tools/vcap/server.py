@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import time
 import json
 import os
 import random
 import sys
+import time
 
 from bottle import run, post, request, response, get, route
 
@@ -25,9 +25,9 @@ port = int(config['server']['port'])
 hkeys = config['hash_key']
 random.shuffle(hkeys)
 
-def initApi():
-    location = [float(config['location']['lat']), float(config['location']['lng'])]
-    print('Using location {} for this request.'.format(str(location)))
+def initApi(lat, lng):
+    location = [float(lat), float(lng)]
+
     device_info = generate_device_info()
     api = PGoApi(device_info=device_info)
 
@@ -49,6 +49,7 @@ def login(provider, username, password, api):
             provider=provider,
             username=username,
             password=password)
+        print('Login successful for account {}.'.format(str(username)))
         rv = [{'auth_status':'success'}]
     except AuthException as e:
         rv = [{'auth_status':'fail', 'error':str(e)}]
@@ -58,13 +59,13 @@ def login(provider, username, password, api):
 def checkChallenge(api):
     try:
         req = api.create_request()
-        req.check_challenge()
-        req.get_inventory()
+        response = req.check_challenge()
+        response = req.get_inventory()
         response = req.call()
         return response
 
     except Exception as e:
-        print('DEBUG CC Exception: ' + str(e))
+        print('CheckChallenge request had an error! Exception: {}.'.format(repr(e)))
         return e
 
 def verifyChallenge(token, api):
@@ -73,7 +74,7 @@ def verifyChallenge(token, api):
         return response
 
     except Exception as e:
-        print('DEBUG VC Exception:' + str(e))
+        print('VerifyChallenge request had an error! Exception: {}.'.format(repr(e)))
         return e
 
 @route('/check/<provider>/', method = 'POST')
@@ -81,7 +82,7 @@ def check(provider):
     username   = request.forms.get('username')
     password   = request.forms.get('password')
 
-    api = initApi()
+    api = initApi(config['location']['lat'], config['location']['lng'])
 
     user = login(provider, username, password, api)
     if 'success' in user['data'][0]['auth_status']:
@@ -109,7 +110,7 @@ def verify(provider):
     password	= request.forms.get('password')
     token	= request.forms.get('token')
 
-    api = initApi()
+    api = initApi(config['location']['lat'], config['location']['lng'])
 
     user = login(provider, username, password, api)
     if 'success' in user['data'][0]['auth_status']:

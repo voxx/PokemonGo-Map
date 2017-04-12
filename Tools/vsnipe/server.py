@@ -67,7 +67,7 @@ def login(api):
             break
         except AuthException as e:
             num_tries += 1
-            print('Login failed for account {}. Trying again in 30 seconds. Error: {}'.format(account['username'], str(e)))
+            print('Login failed for account {}. Trying again in 30 seconds. Error: {}'.format(account['username'], repr(e)))
             rv = [{'auth_status':'fail', 'error':str(e)}]
             time.sleep(30)
 
