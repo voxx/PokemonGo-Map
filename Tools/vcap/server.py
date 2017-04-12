@@ -62,19 +62,21 @@ def checkChallenge(api):
         response = req.check_challenge()
         response = req.get_inventory()
         response = req.call()
+        print('CheckChallenge DEBUG: {}.'.format(stream(response)))
         return response
 
     except Exception as e:
-        print('CheckChallenge request had an error! Exception: {}.'.format(repr(e)))
+        print('Exception while attempting CheckChallenge request: {}.'.format(repr(e)))
         return e
 
 def verifyChallenge(token, api):
     try:
         response = api.verify_challenge(token=token)
+        print('VerifyChallenge DEBUG: {}.'.format(stream(response)))
         return response
 
     except Exception as e:
-        print('VerifyChallenge request had an error! Exception: {}.'.format(repr(e)))
+        print('Exception while attempting VerifyChallenge request: {}.'.format(repr(e)))
         return e
 
 @route('/check/<provider>/', method = 'POST')
