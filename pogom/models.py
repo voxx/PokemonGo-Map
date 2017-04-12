@@ -1966,19 +1966,21 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     'gender': pokemon_info['pokemon_display']['gender'],
                 })
 
-                # Check for DITTO
+                # Catch pokemon to check for Ditto if --ditto enabled
                 if args.ditto:
+
                     is_ditto = False
-                    # Add logic to check inventory for balls before proceeding
-                    pid = p['pokemon_data']['pokemon_id']
                     ditto_dex = [16, 19, 41, 129, 163, 161, 193]
+                    pid = p['pokemon_data']['pokemon_id']
+
                     if int(pid) in ditto_dex:
                         log.info('PID: %s may be a ditto. Triggering catch logic!', pid)
 
                         caught = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
                         if 'catch_status' in caught['data'][0] and caught['data'][0]['catch_status'] == 'success':
                             if int(caught['data'][0]['pid']) == 132:
-                                log.info('PID: %s is a ditto! Updating encounter data with new pokemon id and movesets.', pid)
+                                log.info('PID: %s is a ditto! Updating encounter data with new pokemon_id and movesets.', pid)
+
                                 pokemon[p['encounter_id']].update({
                                     'pokemon_id': 132,
                                     'move_1': caught['data'][0]['m1'],
@@ -2001,7 +2003,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     'spawn_start': start_end[0],
                     'spawn_end': start_end[1]
                 })
-                # Send fake pokemon id to webhook as ditto_id
+                # Send catchable pokemon id to webhook as ditto_id if ditto found.
                 if args.ditto and (is_ditto is True):
                     wh_poke['ditto_id'] = int(pid)
                 wh_update_queue.put(('pokemon', wh_poke))
@@ -2027,6 +2029,11 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 log.error(
                     'Pokestop can not be spun since parsing Pokestops is ' +
                     'not active. Check if \'-nk\' flag is accidentally set.')
+
+        # Add logic to spin stop and clean inventory if --ditto enabled, instead of using -tut logic
+        # Need to look into logic to accept level up rewards
+        # otherwise they all queue up and dont go in inventory until actual device login (i think)
+        # Will be added as spin.py
 
         for f in forts:
             if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops.

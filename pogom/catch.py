@@ -3,6 +3,7 @@
 
 import logging
 import time
+import random
 
 log = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ def catch(api, eid, sid, pid):
         log.info('Starting attempt %s to catch pid: %s!', attempts, pid)
         try:
             req = api.create_request()
-            catch_result = req.catch_pokemon(
+            req.catch_pokemon(
                 encounter_id=eid,
                 pokeball=1,
                 normalized_reticle_size=1.950,
@@ -21,12 +22,8 @@ def catch(api, eid, sid, pid):
                 hit_pokemon=1,
                 spin_modifier=1.0,
                 normalized_hit_position=1.0)
-            catch_result = req.check_challenge()
-            catch_result = req.get_hatched_eggs()
-            catch_result = req.check_awarded_badges()
-            catch_result = req.get_inventory()
-            catch_result = req.download_settings()
-            catch_result = req.get_buddy_walked()
+            req.check_challenge()
+            req.get_inventory()
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
@@ -48,9 +45,8 @@ def catch(api, eid, sid, pid):
 
                     rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
 
-                    time.sleep(10)
+                    time.sleep(random.uniform(7, 10))
                     released = release(api, pid, cpid)
-
                     break
 
                 # Broke free!
@@ -71,14 +67,14 @@ def catch(api, eid, sid, pid):
                 log.error('Catch attempt %s failed for pid: %s. The api response was empty!', attempts, pid)
 
         except Exception as e:
-            log.error('Catch attempt %s failed for pid: %s. The api response returned an error! Error: %s', attempts, pid, str(e))
+            log.error('Catch attempt %s failed for pid: %s. The api response returned an error! Exception: %s', attempts, pid, repr(e))
             rv = [{'catch_status':'error', 'error':str(e)}]
 
         attempts += 1
-        time.sleep(10)
+        time.sleep(random.uniform(5, 10))
 
     if attempts >= 3:
-        log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, attempts)
+        log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, (attempts - 1))
         rv = [{'catch_status':'fail'}]
 
     return dict(data=rv)
@@ -101,7 +97,7 @@ def release(api, pid, cpid):
                 log.info('Failed to release pid: %s with result code: %s.', pid, release_result)
 
     except Exception as e:
-        log.error('Exception occured while releasing pid: %s Error: %s', pid, str(e))
+        log.error('Exception while releasing pid: %s Error: %s', pid, repr(e))
         return False
 
     return True
