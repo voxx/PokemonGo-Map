@@ -11,7 +11,7 @@ from bottle import run, post, request, response, route
 from os.path import dirname, abspath, join
 
 from pgoapi import PGoApi
-from pgoapi.exceptions import AuthException, NotLoggedInException
+from pgoapi.exceptions import AuthException, NotLoggedInException, BannedAccountException
 from pgoapi.utilities import f2i
 from pgoapi import utilities as util
 
@@ -70,6 +70,10 @@ def login(api):
             print('Login failed for account {}. Trying again in 30 seconds. Error: {}'.format(account['username'], repr(e)))
             rv = [{'auth_status':'fail', 'error':str(e)}]
             time.sleep(30)
+        except BannedAccountException as e:
+            print('Login failed for account {}. It appears to be banned. Error: {}'.format(account['username'], repr(e)))
+            rv = [{'auth_status':'banned', 'error':str(e)}]
+            break
 
     if num_tries >= 2:
         print(('Failed to login to account {} after {} attempts. Giving up.').format(account['username'], num_tries))
@@ -84,11 +88,11 @@ def map_request(api, position):
         cell_ids = util.get_cell_ids(scan_location[0], scan_location[1])
         timestamps = [0, ] * len(cell_ids)
         req = api.create_request()
-        response = req.get_map_objects(latitude=f2i(scan_location[0]),
+        req.get_map_objects(latitude=f2i(scan_location[0]),
                                        longitude=f2i(scan_location[1]),
                                        since_timestamp_ms=timestamps,
                                        cell_id=cell_ids)
-        response = req.check_challenge()
+        req.check_challenge()
         response = req.call()
         return response
 
@@ -99,7 +103,7 @@ def map_request(api, position):
 def encounter(api, eid, sid, lat, lng, pid, tth):
     try:
         req = api.create_request()
-        encounter_result = req.encounter(
+        req.encounter(
             encounter_id=eid,
             spawn_point_id=sid,
             player_latitude=lat,
@@ -154,13 +158,18 @@ def vsnipe():
     api = initApi(lat, lng)
 
     user = login(api)
-    if "auth_status" in user['data'][0] and "fail" in user['data'][0]['auth_status']:
-        return user
-    else:
-        time.sleep(5)
+    if "auth_status" in user['data'][0]:
+        if user['data'][0]['auth_status'] == "success":
+            time.sleep(5)
+        else:
+            return user
 
     map_dict = map_request(api, position)
-    time.sleep(5)
+    if map_dict not None and map_dict['responses']['status_code'] == 3:
+        rv = [{'error':'banned'}]
+        return dict(data=rv)
+    else:
+        time.sleep(5)
 
     wild_pokemon = []
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
