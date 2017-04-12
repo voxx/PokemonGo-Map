@@ -48,7 +48,7 @@ def catch(api, eid, sid, pid):
 
                     rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
 
-                    time.sleep(5)
+                    time.sleep(10)
                     released = release(api, pid, cpid)
 
                     break
@@ -75,7 +75,7 @@ def catch(api, eid, sid, pid):
             rv = [{'catch_status':'error', 'error':str(e)}]
 
         attempts += 1
-        time.sleep(5)
+        time.sleep(10)
 
     if attempts >= 3:
         log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, attempts)
