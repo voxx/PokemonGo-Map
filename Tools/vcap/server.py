@@ -94,10 +94,10 @@ def check(provider):
         return dict(data=rv)
 
     try:
+        banned = False
         if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
             challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
-            banned = False
         else:
             show_challenge = False
             challenge_url = False
