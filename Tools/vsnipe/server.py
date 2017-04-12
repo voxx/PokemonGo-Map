@@ -165,7 +165,7 @@ def vsnipe():
             return user
 
     map_dict = map_request(api, position)
-    if map_dict is not None and map_dict['responses']['status_code'] == 3:
+    if map_dict is not None and map_dict['status_code'] == 3:
         rv = [{'error':'banned'}]
         return dict(data=rv)
     else:
