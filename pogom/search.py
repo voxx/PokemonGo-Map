@@ -1011,9 +1011,9 @@ def search_worker_thread(args, account_queue, account_failures,
                         response_dict = map_request(api, step_location,
                                                     args.no_jitter)
                     elif captcha is not None:
-                        if args.account_api_enabled:
-                            scheduler.task_done(status, captcha) # mark task done here and as bad scan so it gets queued to be rescanned
-                            break
+                        #if args.account_api_enabled:
+                            #scheduler.task_done(status, captcha) # mark task done here and as bad scan so it gets queued to be rescanned
+                            #break
                         account_queue.task_done()
                         time.sleep(3)
                         break

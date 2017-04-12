@@ -188,12 +188,12 @@ def handle_captcha(args, status, api, account, account_failures,
             # Account Manager Api Hook
             if args.account_api_enabled:
                 # Building empty parsed object
-                parsed = {
-                    'count': 0,
-                    'gyms': [],
-                    'spawn_points': step_location,
-                    'bad_scan': True
-                }
+                #parsed = {
+                #    'count': 0,
+                #    'gyms': [],
+                #    'spawn_points': step_location,
+                #    'bad_scan': True
+                #}
                 banned = False
                 api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
                 if 'success' in api_response:
@@ -204,7 +204,8 @@ def handle_captcha(args, status, api, account, account_failures,
                 account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'captcha'})
                 log.warning(status['message'])
                 time.sleep(5) # Force sleep to ensure /status update
-                return parsed # Return bad scan object to catch and force rescan instead of skipping
+                #return parsed # Return bad scan object to catch and force rescan instead of skipping
+                return False
 
             if not args.captcha_solving:
                 status['message'] = ('Account {} has encountered a captcha. ' +

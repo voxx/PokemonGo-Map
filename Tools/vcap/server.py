@@ -64,7 +64,7 @@ def checkChallenge(api):
         return response
 
     except Exception as e:
-        print(e) #DEBUG
+        print('DEBUG CC Exception: ' + str(e))
         return e
 
 def verifyChallenge(token, api):
@@ -73,7 +73,7 @@ def verifyChallenge(token, api):
         return response
 
     except Exception as e:
-        print(e) #DEBUG
+        print('DEBUG VC Exception:' + str(e))
         return e
 
 @route('/check/<provider>/', method = 'POST')
