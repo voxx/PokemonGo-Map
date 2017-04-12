@@ -97,10 +97,13 @@ def check(provider):
         if 'show_challenge' in response['responses']['CHECK_CHALLENGE']:
             show_challenge = response['responses']['CHECK_CHALLENGE']['show_challenge']
             challenge_url = response['responses']['CHECK_CHALLENGE']['challenge_url']
+            banned = False
         else:
             show_challenge = False
             challenge_url = False
-        rv = [{'challenge_url': challenge_url}, {'show_challenge': show_challenge}]
+            if response['status_code'] is 3:
+                banned = True
+        rv = [{'challenge_url': challenge_url}, {'show_challenge': show_challenge}, {'banned': banned}]
     except KeyError, e:
         rv = [{'error': str(e)}]
 
