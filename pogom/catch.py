@@ -13,7 +13,7 @@ def catch(api, eid, sid, pid):
         log.info('Starting attempt %s to catch pid: %s!', attempts, pid)
         try:
             req = api.create_request()
-            req.catch_pokemon(
+            catch_result = req.catch_pokemon(
                 encounter_id=eid,
                 pokeball=1,
                 normalized_reticle_size=1.950,
@@ -21,8 +21,12 @@ def catch(api, eid, sid, pid):
                 hit_pokemon=1,
                 spin_modifier=1.0,
                 normalized_hit_position=1.0)
-            req.check_challenge()
-            req.get_inventory()
+            catch_result = req.check_challenge()
+            catch_result = req.get_hatched_eggs()
+            catch_result = req.check_awarded_badges()
+            catch_result = req.get_inventory()
+            catch_result = req.download_settings()
+            catch_result = req.get_buddy_walked()
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
