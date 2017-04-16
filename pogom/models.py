@@ -1788,12 +1788,14 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
         level = get_player_level(map_dict)
         try:
             # Check for and accept level up rewards if available
+            # Need to add logic to check this less often.
             reward_status = level_up_rewards_request(api, level, account)
             log.info('Account %s is level %s and the level reward status ' +
                      'is: %s', account['username'], level, reward_status)
         except Exception as e:
             log.warning('Exception while requesting level up rewards: %s', repr(e))
     if 'GET_INVENTORY' in map_dict['responses']:
+        # Not sure if i need to keep inventory here.
         if not args.ditto:
             del map_dict['responses']['GET_INVENTORY']
     for i, cell in enumerate(cells):
@@ -2000,7 +2002,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 # Catch pokemon to check for Ditto if --ditto enabled
                 if args.ditto:
                     if args.no_pokestops:
-                        log.warning('No PokeStop Scans is enabled. Ditto workers will not be able to restock balls!')
+                        log.warning('Pokestop scanning is disabled. Ditto workers will not be able to restock balls!')
                     if args.complete_tutorial:
                         log.warning('Complete Tutorial is enabled. Ditto workers will not be able to restock balls!')
 

@@ -71,7 +71,7 @@ def pokestop_spinnable(fort, step_location):
     now = time.time()
     needs_cooldown = "cooldown_complete_timestamp_ms" in fort and fort["cooldown_complete_timestamp_ms"] / 1000 > now
     if not in_range:
-        log.info('Pokestop was out of range!')
+        log.debug('Pokestop was out of range!')
 
     return in_range and not needs_cooldown
 
