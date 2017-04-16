@@ -1999,7 +1999,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # Catch pokemon to check for Ditto if --ditto enabled
                 if args.ditto:
-                    if config['parse_pokestops']:
+                    if args.no_pokestops:
                         log.warning('No PokeStop Scans is enabled. Ditto workers will not be able to restock balls!')
                     if args.complete_tutorial:
                         log.warning('Complete Tutorial is enabled. Ditto workers will not be able to restock balls!')

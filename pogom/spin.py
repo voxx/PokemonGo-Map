@@ -20,23 +20,23 @@ def spin_and_drop(api, map_dict, fort, step_location, account):
             log.info("Attempting to drop items for account %s", account['username'])
             drop_items(api, map_dict, 1, 200, 0.10, "Poke Ball")
             drop_items(api, map_dict, 2, 1, 1.0, "Great Ball")
-            drop_items(api, map_dict, 3, 50, 0.10, "Ultra Ball")
-            drop_items(api, map_dict, 101, 1, 1.0, "Potion")
-            drop_items(api, map_dict, 102, 1, 1.0, "Super Potion")
-            drop_items(api, map_dict, 103, 1, 1.0, "Hyper Potion")
-            drop_items(api, map_dict, 104, 1, 1.0, "Max Potion")
-            drop_items(api, map_dict, 201, 1, 1.0, "Revive")
-            drop_items(api, map_dict, 202, 1, 1.0, "Max Revive")
-            drop_items(api, map_dict, 701, 1, 1.0, "Razz Berry")
-            drop_items(api, map_dict, 703, 1, 1.0, "Nanab Berry")
-            drop_items(api, map_dict, 705, 1, 1.0, "Pinap Berry")
+            drop_items(api, map_dict, 3, 10, 0.10, "Ultra Ball")
+            drop_items(api, map_dict, 101, 10, 1.0, "Potion")
+            drop_items(api, map_dict, 102, 10, 1.0, "Super Potion")
+            drop_items(api, map_dict, 103, 10, 1.0, "Hyper Potion")
+            drop_items(api, map_dict, 104, 10, 1.0, "Max Potion")
+            drop_items(api, map_dict, 201, 10, 1.0, "Revive")
+            drop_items(api, map_dict, 202, 10, 1.0, "Max Revive")
+            drop_items(api, map_dict, 701, 10, 1.0, "Razz Berry")
+            drop_items(api, map_dict, 703, 10, 1.0, "Nanab Berry")
+            drop_items(api, map_dict, 705, 10, 1.0, "Pinap Berry")
             return True
 
     return False
 
 
 def spin_pokestop(api, fort, step_location, account):
-    log.debug('Attempting to spin pokestop for account %s.', account['username'])
+    log.info('Attempting to spin pokestop for account %s.', account['username'])
 
     time.sleep(random.uniform(0.8, 1.8))  # Do not let Niantic throttle
     spin_response = spin_pokestop_request(api, fort, step_location)
@@ -45,22 +45,22 @@ def spin_pokestop(api, fort, step_location, account):
     # Check for reCaptcha
     captcha_url = spin_response['responses']['CHECK_CHALLENGE']['challenge_url']
     if len(captcha_url) > 1:
-        log.debug('Account encountered a captcha!')
+        log.info('Account encountered a captcha!')
         return False
 
     spin_result = spin_response['responses']['FORT_SEARCH']['result']
     if spin_result is 1:
         return True
     elif spin_result is 2:
-        log.debug('Unable to spin pokestop. Out of range!')
+        log.info('Unable to spin pokestop. Out of range!')
     elif spin_result is 3:
-        log.debug('Failed to spin pokestop. Needs to cool down!')
+        log.info('Failed to spin pokestop. Needs to cool down!')
     elif spin_result is 4:
-        log.debug('Failed to spin pokestop. Inventory is full!')
+        log.info('Failed to spin pokestop. Inventory is full!')
     elif spin_result is 5:
-        log.debug('Maximum number of pokestops spun for today!')
+        log.info('Maximum number of pokestops spun for today!')
     else:
-        log.debug('Failed to spin a pokestop. Unknown result %d.', spin_result)
+        log.info('Failed to spin a pokestop. Unknown result %d.', spin_result)
 
     return False
 
@@ -70,6 +70,8 @@ def pokestop_spinnable(fort, step_location):
     in_range = in_radius((fort['latitude'], fort['longitude']), step_location, spinning_radius)
     now = time.time()
     needs_cooldown = "cooldown_complete_timestamp_ms" in fort and fort["cooldown_complete_timestamp_ms"] / 1000 > now
+    if not in_range:
+        log.info('Pokestop was out of range!')
 
     return in_range and not needs_cooldown
 
@@ -147,7 +149,7 @@ def drop_items_request(api, item_id, amount):
 # 1: SUCCESS
 # 2: AWARDED_ALREADY
 def level_up_rewards_request(api, player_level, account):
-    log.debug('Attempting to check level up rewards for account %s.', account['username'])
+    log.info('Attempting to check level up rewards for account %s.', account['username'])
     time.sleep(random.uniform(2, 3))
     try:
         req = api.create_request()
