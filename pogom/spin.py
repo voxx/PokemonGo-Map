@@ -164,10 +164,9 @@ def level_up_rewards_request(api, player_level):
         req = api.create_request()
         req.level_up_rewards(level=player_level)
         req.check_challenge()
-        level_up_rewards_response = req.call()
-        if ('responses' in level_up_rewards_response)
-            and ('LEVEL_UP_REWARDS' in level_up_rewards_response['responses'])
-            reward_details = level_up_rewards_response['responses']['LEVEL_UP_REWARDS']
+        rewards_response = req.call()
+        if ('responses' in rewards_response) and ('LEVEL_UP_REWARDS' in rewards_response['responses'])):
+            reward_details = rewards_response['responses']['LEVEL_UP_REWARDS']
             return reward_details.get('result', -1)
 
     except Exception as e:
