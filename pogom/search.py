@@ -836,7 +836,7 @@ def search_worker_thread(args, account_queue, account_failures,
                         log.warning(status['message'])
                         time.sleep(5)
                         account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'banned'})
-                        scheduler.task_done(status, parsed)
+                        # scheduler.task_done(status, parsed)
                         # exit this loop to get a new account and have the API recreated
                         break
 
