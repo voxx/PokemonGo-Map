@@ -233,6 +233,8 @@ def main():
         log.info('Parsing of Gyms disabled.')
     if args.encounter:
         log.info('Encountering pokemon enabled.')
+    if args.ditto:
+        log.info('Ditto Mode enabled.')
 
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china

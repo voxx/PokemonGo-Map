@@ -2002,9 +2002,9 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 # Catch pokemon to check for Ditto if --ditto enabled
                 if args.ditto:
                     if args.no_pokestops:
-                        log.warning('Pokestop scanning is disabled. Ditto workers will not be able to restock balls!')
+                        log.warning('Parsing of Pokestops disabled. Ditto workers will not be able to restock balls!')
                     if args.complete_tutorial:
-                        log.warning('Complete Tutorial is enabled. Ditto workers will not be able to restock balls!')
+                        log.warning('Tutorial Completion is enabled. Ditto workers will not be able to restock balls!')
 
                     is_ditto = False
                     ditto_dex = [16, 19, 41, 129, 163, 161, 193]
@@ -2097,8 +2097,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     try:
                         # Attempt to spin a stop and drop excess items.
                         restock = spin_and_drop(api, map_dict, f, step_location, account)
-                        # log.info('Account %s attempted to spin a stop and the ' +
-                        #         'result was: %s', account['username'], restock)
+                        log.debug('Account %s attempted to spin a stop and the ' +
+                                 'result was: %s', account['username'], restock)
                     except Exception as e:
                         log.warning('Exception while spinning stop or dropping items: %s', repr(e))
 

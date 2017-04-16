@@ -17,7 +17,7 @@ def spin_and_drop(api, map_dict, fort, step_location, account):
         if pokestop_spinnable(fort, step_location) and spin_pokestop(api, fort, step_location, account):
             log.info('Account %s successfully spun a pokestop.', account['username'])
 
-            log.info("Attempting to drop items for account %s", account['username'])
+            log.info("Checking if items need to be dropped for account %s.", account['username'])
             drop_items(api, map_dict, 1, 200, 0.10, "Poke Ball")
             drop_items(api, map_dict, 2, 1, 1.0, "Great Ball")
             drop_items(api, map_dict, 3, 10, 0.10, "Ultra Ball")
@@ -122,7 +122,7 @@ def drop_items(api, map_dict, item_id, min_count, drop_fraction, item_name):
         else:
             log.warning("Failed dropping {} {}s.".format(drop_count, item_name))
     else:
-        log.info("Bag contains {} {}s. No need to drop any.".format(item_count, item_name))
+        log.debug("Bag contains {} {}s. No need to drop any.".format(item_count, item_name))
 
 
 def drop_items_request(api, item_id, amount):
