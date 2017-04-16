@@ -1783,7 +1783,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     # Consolidate the individual lists in each cell into two lists of Pokemon
     # and a list of forts.
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
-    # Get the level for the pokestop spin in any case delete inventory
+    # Get the level of the player and delete inventory dict if ditto not enabled
     if (args.complete_tutorial or args.ditto) and config['parse_pokestops']:
         level = get_player_level(map_dict)
         try:
@@ -1999,9 +1999,9 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # Catch pokemon to check for Ditto if --ditto enabled
                 if args.ditto:
-                    if args.no-pokestops:
+                    if config['parse_pokestops']:
                         log.warning('No PokeStop Scans is enabled. Ditto workers will not be able to restock balls!')
-                    if args.complete-tutorial:
+                    if args.complete_tutorial:
                         log.warning('Complete Tutorial is enabled. Ditto workers will not be able to restock balls!')
 
                     is_ditto = False
@@ -2169,6 +2169,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 }
 
         del forts
+        if args.ditto:
+            del map_dict['responses']['GET_INVENTORY']
 
     log.info('Parsing found Pokemon: %d, nearby: %d, pokestops: %d, gyms: %d.',
              len(pokemon) + skipped,

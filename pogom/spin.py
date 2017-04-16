@@ -13,7 +13,6 @@ log = logging.getLogger(__name__)
 # Perform a Pokestop spin and drops most items.
 # Adapted from sLoPPydrive
 def spin_and_drop(api, map_dict, fort, step_location, account):
-    # for fort in forts:
     if fort.get('type') == 1:
         if pokestop_spinnable(fort, step_location) and spin_pokestop(api, fort, step_location, account):
             log.info('Account %s successfully spun a pokestop.', account['username'])
