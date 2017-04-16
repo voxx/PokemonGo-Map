@@ -8,7 +8,7 @@ install:
   - nvm install 4.4.7
   - pip install flake8
   - pip install Cython
-  - pip install -r requirements.txt --upgrade
+  - pip install -r requirements.txt
   - npm install
 
 # script steps, if erroring, will fail the build but not stop the build process
