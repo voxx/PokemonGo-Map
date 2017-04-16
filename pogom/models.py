@@ -2001,7 +2001,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         caught = catch(api, p['encounter_id'], p['spawn_point_id'], pid)
                         if 'catch_status' in caught['data'][0] and caught['data'][0]['catch_status'] == 'success':
                             if int(caught['data'][0]['pid']) == 132:
-                                log.info('PID: %s is a ditto! Updating encounter data with new pokemon_id and movesets.', pid)
+                                log.info('PID: %s is a ditto! Updating encounter ' +
+                                         'data with new pokemon_id and movesets.', pid)
 
                                 pokemon[p['encounter_id']].update({
                                     'pokemon_id': 132,

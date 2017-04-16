@@ -43,10 +43,10 @@ def catch(api, eid, sid, pid):
                             m1 = iidata['pokemon_data']['move_1']
                             m2 = iidata['pokemon_data']['move_2']
 
-                    rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
+                    rv = [{'catch_status': 'success', 'pid': npid, 'm1': m1, 'm2': m2}]
 
                     time.sleep(random.uniform(7, 10))
-                    released = release(api, pid, cpid)
+                    release(api, pid, cpid)
                     break
 
                 # Broke free!
@@ -56,7 +56,7 @@ def catch(api, eid, sid, pid):
                 # Ran away!
                 if catch_status == 3:
                     log.info('Catch attempt %s failed for pid: %s. It ran away!', attempts, pid)
-                    rv = [{'catch_status':'ran'}]
+                    rv = [{'catch_status': 'ran'}]
                     break
 
                 # Dodged!
@@ -67,15 +67,16 @@ def catch(api, eid, sid, pid):
                 log.error('Catch attempt %s failed for pid: %s. The api response was empty!', attempts, pid)
 
         except Exception as e:
-            log.error('Catch attempt %s failed for pid: %s. The api response returned an error! Exception: %s', attempts, pid, repr(e))
-            rv = [{'catch_status':'error', 'error':str(e)}]
+            log.error('Catch attempt %s failed for pid: %s. The api response returned an error! ' +
+                      'Exception: %s', attempts, pid, repr(e))
+            rv = [{'catch_status': 'error', 'error': str(e)}]
 
         attempts += 1
         time.sleep(random.uniform(5, 10))
 
     if attempts >= 3:
         log.error('Failed to catch pid: %s after %s attempts. Giving up.', pid, (attempts - 1))
-        rv = [{'catch_status':'fail'}]
+        rv = [{'catch_status': 'fail'}]
 
     return dict(data=rv)
 
@@ -90,7 +91,7 @@ def release(api, pid, cpid):
         release_result = req.call()
 
         if (release_result is not None and 'RELEASE_POKEMON' in release_result['responses']):
-            release_result = release_result['responses']['RELEASE_POKEMON']['result'];
+            release_result = release_result['responses']['RELEASE_POKEMON']['result']
             if int(release_result) == 1:
                 log.info('Successfully released pid: %s', pid)
             else:

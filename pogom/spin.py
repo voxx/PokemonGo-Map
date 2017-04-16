@@ -41,7 +41,7 @@ def get_player_level(map_dict):
         'inventory_delta', {}).get(
         'inventory_items', [])
     player_stats = [item['inventory_item_data']['player_stats']
-        for item in inventory_items if 'player_stats' in item.get('inventory_item_data', {})]
+                    for item in inventory_items if 'player_stats' in item.get('inventory_item_data', {})]
     if len(player_stats) > 0:
         player_level = player_stats[0].get('level', 1)
         return player_level
@@ -89,15 +89,14 @@ def spin_pokestop(api, fort, step_location):
     elif spin_result is 5:
         log.debug('Maximum number of pokestops spun for today!')
     else:
-        log.debug('Failed to spin a pokestop. Unknown result %d.',spin_result)
+        log.debug('Failed to spin a pokestop. Unknown result %d.', spin_result)
 
     return False
 
 
 def pokestop_spinnable(fort, step_location):
     spinning_radius = 0.04
-    in_range = in_radius((fort['latitude'], fort['longitude']), step_location,
-                 spinning_radius)
+    in_range = in_radius((fort['latitude'], fort['longitude']), step_location, spinning_radius)
     now = time.time()
     needs_cooldown = "cooldown_complete_timestamp_ms" in fort and fort["cooldown_complete_timestamp_ms"] / 1000 > now
 
@@ -166,8 +165,8 @@ def level_up_rewards_request(api, player_level):
         req.level_up_rewards(level=player_level)
         req.check_challenge()
         level_up_rewards_response = req.call()
-        if ('responses' in level_up_rewards_response) and (
-            'LEVEL_UP_REWARDS' in level_up_rewards_response['responses'])
+        if ('responses' in level_up_rewards_response)
+            and ('LEVEL_UP_REWARDS' in level_up_rewards_response['responses'])
             reward_details = level_up_rewards_response['responses']['LEVEL_UP_REWARDS']
             return reward_details.get('result', -1)
 
