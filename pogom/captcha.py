@@ -202,8 +202,8 @@ def handle_captcha(args, status, api, account, account_failures,
                                          'notified.'.format(account['username']))
                 else:
                     status['message'] = ('Account {} encountered a captcha. ' +
-                                        'The Account Manager API notification ' +
-                                        'failed.'.format(account['username']))
+                                         'The Account Manager API notification ' +
+                                         'failed.'.format(account['username']))
 
                 account_failures.append({
                     'account': account,
@@ -370,7 +370,7 @@ def notify_account_api(args, status, username, challenge_url, banned):
     # status 401 = unauthorized api request / 404 user not found
     except Exception as e:
         status['message'] = ('{} Exception occurred while notifying Account ' +
-                            'Manager API: {}'.format(response_code, e))
+                             'Manager API: {}'.format(response_code, e))
         log.exception(status['message'])
         return 'ERROR'
 

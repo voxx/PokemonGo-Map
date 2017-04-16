@@ -165,7 +165,7 @@ def level_up_rewards_request(api, player_level):
         req.level_up_rewards(level=player_level)
         req.check_challenge()
         rewards_response = req.call()
-        if ('responses' in rewards_response) and ('LEVEL_UP_REWARDS' in rewards_response['responses'])):
+        if ('responses' in rewards_response) and ('LEVEL_UP_REWARDS' in rewards_response['responses']):
             reward_details = rewards_response['responses']['LEVEL_UP_REWARDS']
             return reward_details.get('result', -1)
 

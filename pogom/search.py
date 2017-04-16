@@ -826,12 +826,12 @@ def search_worker_thread(args, account_queue, account_failures,
                         api_response = notify_account_api(args, status, account['username'], captcha_url, banned)
                         if 'success' in api_response:
                             status['message'] = ('Account {} failed more than {} scans in a row, ' +
-                                                'it\'s probably banned. The Account Manager API was successfully ' +
-                                                'notified.'.format(account['username'], args.max_failures))
+                                                 'it\'s probably banned. The Account Manager API was successfully ' +
+                                                 'notified.'.format(account['username'], args.max_failures))
                         else:
                             status['message'] = ('Account {} failed more than {} scans in a row, ' +
-                                                'it\'s probably banned. The Account Manager API notification ' +
-                                                'failed.'.format(account['username'], args.max_failures))
+                                                 'it\'s probably banned. The Account Manager API notification ' +
+                                                 'failed.'.format(account['username'], args.max_failures))
 
                         log.warning(status['message'])
                         time.sleep(5)
