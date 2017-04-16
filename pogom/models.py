@@ -35,6 +35,7 @@ from .transform import transform_from_wgs_to_gcj, get_new_coords
 from .customLog import printPokemon
 from .account import tutorial_pokestop_spin, get_player_level
 from .catch import catch
+from .spin import level_up_rewards_request, spin_and_drop
 
 log = logging.getLogger(__name__)
 
@@ -1783,10 +1784,17 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     # and a list of forts.
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     # Get the level for the pokestop spin in any case delete inventory
-    if args.complete_tutorial and config['parse_pokestops']:
+    if (args.complete_tutorial or args.ditto) and config['parse_pokestops']:
         level = get_player_level(map_dict)
+        try:
+            # Check for and accept level up rewards if available
+            reward_status = level_up_rewards_request(api, level, account)
+            log.info('Account %s is level %s and the level reward status is: %s', account['username'], level, reward_status)
+        except Exception as e:
+            log.warning('Exception while requesting level up rewards: %s', repr(e))
     if 'GET_INVENTORY' in map_dict['responses']:
-        del map_dict['responses']['GET_INVENTORY']
+        if not args.ditto:
+            del map_dict['responses']['GET_INVENTORY']
     for i, cell in enumerate(cells):
         # If we have map responses then use the time from the request
         if i == 0:
@@ -1990,6 +1998,10 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
 
                 # Catch pokemon to check for Ditto if --ditto enabled
                 if args.ditto:
+                    if args.no-pokestops:
+                        log.warning('No PokeStop Scans is enabled. Ditto workers will not be able to restock balls!')
+                    if args.complete-tutorial:
+                        log.warning('Complete Tutorial is enabled. Ditto workers will not be able to restock balls!')
 
                     is_ditto = False
                     ditto_dex = [16, 19, 41, 129, 163, 161, 193]
@@ -2055,11 +2067,6 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     'Pokestop can not be spun since parsing Pokestops is ' +
                     'not active. Check if \'-nk\' flag is accidentally set.')
 
-        # Add logic to spin stop and clean inventory if --ditto enabled, instead of using -tut logic
-        # Need to look into logic to accept level up rewards
-        # otherwise they all queue up and dont go in inventory until actual device login (i think)
-        # Will be added as spin.py
-
         for f in forts:
             if config['parse_pokestops'] and f.get('type') == 1:  # Pokestops.
                 if 'active_fort_modifier' in f:
@@ -2081,6 +2088,15 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                         }))
                 else:
                     lure_expiration, active_fort_modifier = None, None
+
+                # Attempt to restock and cleanup bag items if --ditto enabled.
+                if args.ditto:
+                    try:
+                        # Attempt to spin a stop and drop excess items.
+                        restock = spin_and_drop(api, map_dict, fort, step_location, account)
+                        log.info('Account %s attempted to spin a stop and the result was: %s', account['username'], restock)
+                    except Exception as e:
+                        log.warning('Exception while spinning stop or dropping items: %s', repr(e))
 
                 # Send all pokestops to webhooks.
                 if args.webhooks and not args.webhook_updates_only:
