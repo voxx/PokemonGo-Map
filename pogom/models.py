@@ -1789,7 +1789,8 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
         try:
             # Check for and accept level up rewards if available
             reward_status = level_up_rewards_request(api, level, account)
-            log.info('Account %s is level %s and the level reward status is: %s', account['username'], level, reward_status)
+            log.info('Account %s is level %s and the level reward status ' +
+                     'is: %s', account['username'], level, reward_status)
         except Exception as e:
             log.warning('Exception while requesting level up rewards: %s', repr(e))
     if 'GET_INVENTORY' in map_dict['responses']:
@@ -2093,8 +2094,9 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                 if args.ditto:
                     try:
                         # Attempt to spin a stop and drop excess items.
-                        restock = spin_and_drop(api, map_dict, fort, step_location, account)
-                        log.info('Account %s attempted to spin a stop and the result was: %s', account['username'], restock)
+                        restock = spin_and_drop(api, map_dict, f, step_location, account)
+                        log.info('Account %s attempted to spin a stop and the ' +
+                                 'result was: %s', account['username'], restock)
                     except Exception as e:
                         log.warning('Exception while spinning stop or dropping items: %s', repr(e))
 
