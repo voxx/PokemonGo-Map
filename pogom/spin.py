@@ -5,6 +5,8 @@ import logging
 import time
 import random
 
+from .utils import in_radius
+
 log = logging.getLogger(__name__)
 
 
