@@ -7,6 +7,7 @@ import random
 
 log = logging.getLogger(__name__)
 
+
 def catch(api, eid, sid, pid):
     # Try to catch pokemon, but don't get stuck.
     attempts = 1
@@ -27,8 +28,7 @@ def catch(api, eid, sid, pid):
             catch_result = req.call()
 
             if (catch_result is not None and 'CATCH_POKEMON' in catch_result['responses']):
-                #log.info('DEBUG: %s', catch_result['responses']['CATCH_POKEMON'])
-                catch_status = catch_result['responses']['CATCH_POKEMON']['status'];
+                catch_status = catch_result['responses']['CATCH_POKEMON']['status']
                 # Success!
                 if catch_status == 1:
                     cpid = catch_result['responses']['CATCH_POKEMON']['captured_pokemon_id']
@@ -39,9 +39,9 @@ def catch(api, eid, sid, pid):
                     for item in iitems:
                         iidata = item['inventory_item_data']
                         if str(cpid) in str(item):
-                            npid = item['inventory_item_data']['pokemon_data']['pokemon_id']
-                            m1 = item['inventory_item_data']['pokemon_data']['move_1']
-                            m2 = item['inventory_item_data']['pokemon_data']['move_2']
+                            npid = iidata['pokemon_data']['pokemon_id']
+                            m1 = iidata['pokemon_data']['move_1']
+                            m2 = iidata['pokemon_data']['move_2']
 
                     rv = [{'catch_status':'success', 'pid':npid, 'm1':m1, 'm2':m2}]
 
@@ -79,6 +79,7 @@ def catch(api, eid, sid, pid):
 
     return dict(data=rv)
 
+
 def release(api, pid, cpid):
     try:
         log.info('Attempting to release pid: %s', pid)
@@ -89,7 +90,6 @@ def release(api, pid, cpid):
         release_result = req.call()
 
         if (release_result is not None and 'RELEASE_POKEMON' in release_result['responses']):
-            #log.info('DEBUG: %s', release_result['responses']['RELEASE_POKEMON'])
             release_result = release_result['responses']['RELEASE_POKEMON']['result'];
             if int(release_result) == 1:
                 log.info('Successfully released pid: %s', pid)
