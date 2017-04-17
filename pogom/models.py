@@ -1762,7 +1762,7 @@ def hex_bounds(center, steps=None, radius=None):
 
 # todo: this probably shouldn't _really_ be in "models" anymore, but w/e.
 def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
-              api, now_date, account):
+              api, now_date, account, check_rewards=False):
     pokemon = {}
     pokestops = {}
     gyms = {}
@@ -1783,19 +1783,22 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     # Consolidate the individual lists in each cell into two lists of Pokemon
     # and a list of forts.
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
-    # Get the level of the player and delete inventory dict if ditto not enabled
+    # Get the level of the player and delete inventory dict if -ditto not enabled
     if (args.complete_tutorial or args.ditto) and config['parse_pokestops']:
         level = get_player_level(map_dict)
         try:
-            # Check for and accept level up rewards if available
-            # Need to add logic to check this less often.
-            reward_status = level_up_rewards_request(api, level, account)
-            log.info('Account %s is level %s and the level reward status ' +
-                     'is: %s', account['username'], level, reward_status)
+            # Check for and accept level up rewards if check_rewards is True.
+            # This is triggered once during first parse_map after login.
+            # Should find a better way to determine if player rewards pending
+            # and check at more appropriate time/location.
+            if check_rewards:
+                reward_status = level_up_rewards_request(api, level, account)
+                log.info('Account %s is level %s and the level reward status ' +
+                         'is: %s', account['username'], level, reward_status)
         except Exception as e:
             log.warning('Exception while requesting level up rewards: %s', repr(e))
     if 'GET_INVENTORY' in map_dict['responses']:
-        # Not sure if i need to keep inventory here.
+        # Do not delete inventory yet if -ditto enabled.
         if not args.ditto:
             del map_dict['responses']['GET_INVENTORY']
     for i, cell in enumerate(cells):

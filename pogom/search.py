@@ -749,6 +749,7 @@ def search_worker_thread(args, account_queue, account_failures,
 
             # Track per loop.
             first_login = True
+            check_rewards = True
 
             # Make sure the scheduler is done for valid locations
             while not scheduler.ready:
@@ -962,6 +963,11 @@ def search_worker_thread(args, account_queue, account_failures,
                 # check_login().
                 if first_login:
                     first_login = False
+                else:
+                    # Check for level up rewards once per login if using -ditto
+                    # Flag checked on first map_request
+                    if args.ditto:
+                        check_rewards = False
 
                     # Check tutorial completion.
                     if args.complete_tutorial:
@@ -1024,7 +1030,7 @@ def search_worker_thread(args, account_queue, account_failures,
                         break
 
                     parsed = parse_map(args, response_dict, step_location,
-                                       dbq, whq, api, scan_date, account)
+                                       dbq, whq, api, scan_date, account, check_rewards)
                     del response_dict
                     scheduler.task_done(status, parsed)
                     if parsed['count'] > 0:
