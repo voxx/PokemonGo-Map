@@ -8,6 +8,7 @@
 config/*
 !config/config.ini.example
 !config/config.tutorial.example
+!config/config.ditto.example
 static/dist/
 node_modules/
 venv/
@@ -26,8 +27,6 @@ static/icons/*.png
 *.log
 Tools/PokeAlarm/
 !docs/make.bat
-!Tools/Easy-Setup/easy-setup.sh
-!Tools/Easy-Setup/setup.bat
 !contrib/supervisord/gen-workers.sh
 !contrib/supervisord/install-reinstall.sh
 !static/data/*

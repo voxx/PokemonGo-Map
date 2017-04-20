@@ -1,0 +1,123 @@
+# DO NOT USE RICH TEXT EDITOR TO EDIT THIS FILE!
+# Uncomment a line when you want to change its default value (Remove # at the beginning)
+# Please ensure to leave a space after the colon if a value is needed ("example-setting" "example-setting-with: value")
+# When your configuration is done, rename this file by removing the ".example" extension and replace with ".ini"
+# A different config-files can be included directly in processes by "--config-file" or "-cf" and path
+
+
+# Required settings
+###################
+
+#hash-key:                      # Key for hash server (default=None)
+
+
+# Database settings
+###################
+
+db-type: mysql                  # sqlite (default) or mysql
+#db:                            # Database filename for SQLite. (default='pogom.db')
+#db-host:                       # Required for mysql ()
+#db-name:                       # Required for mysql
+#db-user:                       # Required for mysql
+#db-pass:                       # Required for mysql
+#db-port:                       # Required for mysql (default=3306)
+db-max_connections: 100         # Max connections (per thread) for the database. (default=5)
+db-threads: 15                  # Number of db threads; increase if the db queue falls behind. (default=1)
+purge-data: 24                  # Clear Pokemon from database this many hours after they disappear (0 to disable)
+
+# Search settings
+#################
+
+speed-scan                      # Use speed-scan as the search scheduler.
+step-limit: 6                   # Steps (default=10)
+scan-delay: 20                  # Time delay between requests in scan threads. (default=12)
+spawn-delay: 20                 # Number of seconds after spawn time to wait before scanning to be sure the Pokemon is there. (default=10)
+kph: 15                         # Set a maximum speed in km/hour for scanner movement. (default=35)
+no-gyms                         # Disables gym scanning (default=False)
+min-seconds-left: 90            # Time that must be left on a spawn before considering it too late and skipping it. (default=0)
+encounter: true                 # Set to true to start encounters to pull more info, like IVs or movesets. (default false)
+encounter-delay: 15             # delay in seconds before starting an encounter. Must not be zero. (default 1)
+#encounter-whitelist:           # whitelist of pokemon ids to encounter. Syntax [id,id,id,id] (Do not use with blacklist)
+encounter-blacklist: [122]      # blacklist of pokemon ids to NOT encounter. Syntax [id,id,id,id] (Do not use with whitelist)
+
+
+# Account rotation
+##################
+
+login-delay: 30                 # Time delay between each login attempt. (default=6)
+account-search-interval: 7200   # Seconds for accounts to search before switching to a new account. (default=0)
+account-rest-interval: 9600     # Seconds for accounts to rest when they fail or are switched out. (default=7200)
+max-failures: 10                # Maximum number of failures to parse locations before an account will go into a sleep for
+max-empty: 10                   # Maximum number of empty scans before an account will go into a sleep for
+
+
+# Webserver settings
+####################
+
+host: 127.0.0.1                 # Address to listen on (default='127.0.0.1')
+port: 8080                      # Port to listen on (default=5000)
+#gmaps-key:                     # Your Google Maps API key
+#locale:                        # Pokemon translation
+#cors                           # Enable CORS on web server.
+#ssl-certificate:               # Path to ssl certificate
+#ssl-privatekey:                # Path to ssl private key
+disable-blacklist               # Disable the global anti-scraper IP blacklist.
+
+
+# Proxy settings
+################
+
+#proxy:                         # Proxy URL e.g. socks5://127.0.0.1:9050 or a list of proxies
+                                # e.g. [socks5://127.0.0.1:9050,socks5://127.0.0.1:9050]
+#proxy-skip-check               # Disable checking of proxies before start.
+#proxy-timeout:                 # Timeout before proceeding with next proxy while checking if the proxy works. (default=5)
+#proxy-display:                 # Used with -ps, full = display complete proxy address. Index = displays just the index for that proxy. (default='index')
+#proxy-file:                    # Load proxy list from text file (one proxy per line), overrides #proxy.
+#proxy-refresh:                 # Period of proxy file reloading, in seconds. Works only with proxy-file. (default=0, 0 to disable)
+#proxy-rotation:                # Enable proxy rotation with account changing for search threads (none/round/random). (default='none')
+
+
+# Webhook settings
+##################
+
+webhook: http://127.0.0.1:4000  # Webhook URL e.g. http://127.0.0.1:12345 or a list for multiple webhooks
+                                # [http://127.0.0.1:1345,http://127.0.0.1:12346] (default=None)
+wh-threads: 2                   # Number of webhook threads; increase if the webhook queue falls behind. (default=1)
+webhook-updates-only            # Only send updates to webhooks (excludes gyms & non-lured pokéstops). (default=False)
+
+
+# Status and logs
+#################
+
+#print-status                   # Enable ENTER to switch between log view and a status view.
+                                # Optionally add ": status" to start in status view and ": logs" to start in log view. (default=False)
+#status-page-password:          # Enables and protects the /status page to view status of all workers. (default=None)
+
+
+# Captcha Solving
+#################
+
+#captcha-solving                # Enables captcha solving. (default=False)
+#captcha-key:                   # 2Captcha API key.
+#captcha-dsk:                   # PokemonGo captcha data-sitekey. Don't change this if not explicitly needed due to recent changes.
+                                # (default="6LeeTScTAAAAADqvhqVMhPpr_vB9D364Ia-1dSgK")
+#manual-captcha-domain:         # Enables the option to manual solve Captcha.
+                                # Enter domain where captcha tokens will be sent. (default="http://127.0.0.1:5000")
+#manual-captcha-refresh:        # Time available before captcha page refreshes. (default=30)
+#manual-captcha-timeout:        # Maximum time captchas will wait for manual captcha solving.
+                                # On timeout, if enabled, 2Captcha will be used to solve captcha. (default=0)
+
+
+# Misc
+######
+
+#no-version-check               # Disable API version check. (default=False)
+#version-check-interval:        # Interval to check API version in seconds (Default: in range [60, 300]).
+
+
+# Account Manager API Settings - IGNORE THIS IS CUSTOM
+######################################################
+
+#account-api-enabled:   # Enable Account Manager Api (true/false)
+#account-api-key:       # Account API Key (XXXXXXXXXXXXXXXX)
+#account-api-url:       # Account API Url (https://yourdomain.com/accounts/update)
