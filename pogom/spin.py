@@ -21,7 +21,7 @@ def spin_and_drop(api, map_dict, fort, step_location, account):
             log.info("Checking if items need to be dropped for account %s.", account['username'])
             drop_items(api, map_dict, 1, 200, 0.10, "Poke Ball")
             drop_items(api, map_dict, 2, 1, 1.0, "Great Ball")
-            drop_items(api, map_dict, 3, 10, 0.10, "Ultra Ball")
+            drop_items(api, map_dict, 3, 10, 0.80, "Ultra Ball")
             drop_items(api, map_dict, 101, 10, 1.0, "Potion")
             drop_items(api, map_dict, 102, 10, 1.0, "Super Potion")
             drop_items(api, map_dict, 103, 10, 1.0, "Hyper Potion")
