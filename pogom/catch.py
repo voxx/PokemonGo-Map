@@ -53,7 +53,7 @@ def catch(api, eid, sid, pid):
                         'm1': m1,
                         'm2': m2,
                         'height': height,
-                        'weight' weight,
+                        'weight': weight,
                         'gender': gender,
                         'cp': cp
                     }]
