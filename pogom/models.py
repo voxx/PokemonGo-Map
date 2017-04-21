@@ -2028,8 +2028,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                     'move_2': caught['data'][0]['m2'],
                                     'height': caught['data'][0]['height'],
                                     'weight': caught['data'][0]['weight'],
-                                    'gender': caught['data'][0]['gender'],
-                                    'cp': caught['data'][0]['cp']
+                                    'gender': caught['data'][0]['gender']
                                 })
                                 is_ditto = True
                             else:
