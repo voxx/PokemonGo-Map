@@ -14,8 +14,9 @@ log = logging.getLogger(__name__)
 # Adapted from sLoPPydrive
 def spin_and_drop(api, map_dict, fort, step_location, account):
     if fort.get('type') == 1:
-        if pokestop_spinnable(fort, step_location) and spin_pokestop(api, fort, step_location, account):
-            log.info('Account %s successfully spun a pokestop.', account['username'])
+        if pokestop_spinnable(fort, step_location):
+            if spin_pokestop(api, fort, step_location, account):
+                log.info('Account %s successfully spun a pokestop.', account['username'])
 
             log.info("Checking if items need to be dropped for account %s.", account['username'])
             drop_items(api, map_dict, 1, 200, 0.10, "Poke Ball")
