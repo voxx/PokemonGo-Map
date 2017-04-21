@@ -42,8 +42,21 @@ def catch(api, eid, sid, pid):
                             npid = iidata['pokemon_data']['pokemon_id']
                             m1 = iidata['pokemon_data']['move_1']
                             m2 = iidata['pokemon_data']['move_2']
+                            height = iidata['pokemon_data']['height_m']
+                            weight = iidata['pokemon_data']['weight_kg']
+                            gender = iidata['pokemon_data']['pokemon_display']['gender']
+                            cp = '?'
 
-                    rv = [{'catch_status': 'success', 'pid': npid, 'm1': m1, 'm2': m2}]
+                    rv = [{
+                        'catch_status': 'success',
+                        'pid': npid,
+                        'm1': m1,
+                        'm2': m2,
+                        'height': height,
+                        'weight' weight,
+                        'gender': gender,
+                        'cp': cp
+                    }]
 
                     time.sleep(random.uniform(7, 10))
                     release(api, pid, cpid)

@@ -2025,7 +2025,11 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                                 pokemon[p['encounter_id']].update({
                                     'pokemon_id': 132,
                                     'move_1': caught['data'][0]['m1'],
-                                    'move_2': caught['data'][0]['m2']
+                                    'move_2': caught['data'][0]['m2'],
+                                    'height': caught['data'][0]['height'],
+                                    'weight': caught['data'][0]['weight'],
+                                    'gender': caught['data'][0]['gender'],
+                                    'cp': caught['data'][0]['cp']
                                 })
                                 is_ditto = True
                             else:
