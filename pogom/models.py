@@ -1779,6 +1779,7 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
     new_spawn_points = []
     sp_id_list = []
     captcha_url = ''
+    is_ditto = False
 
     # Consolidate the individual lists in each cell into two lists of Pokemon
     # and a list of forts.
@@ -2009,7 +2010,6 @@ def parse_map(args, map_dict, step_location, db_update_queue, wh_update_queue,
                     if args.complete_tutorial:
                         log.warning('Tutorial Completion is enabled. Ditto workers will not be able to restock balls!')
 
-                    is_ditto = False
                     ditto_dex = [16, 19, 41, 129, 163, 161, 193]
                     pid = p['pokemon_data']['pokemon_id']
 
