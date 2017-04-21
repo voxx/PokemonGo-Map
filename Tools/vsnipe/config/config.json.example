@@ -1,10 +1,11 @@
 {
   "server": {
     "protocol":"http",
-    "host":"sub.domain.tld",
+    "host":"127.0.0.1",
     "port":"14441"
   },
   "hash_key": [
+    { "enabled":"False", "key":"" },
     { "enabled":"False", "key":"" }
   ],
   "accounts": [
