@@ -28,6 +28,7 @@ purge-data: 24                  # Clear Pokemon from database this many hours af
 # Search settings
 #################
 
+ditto                           # Enable Ditto Finder Mode (default=False)
 speed-scan                      # Use speed-scan as the search scheduler.
 step-limit: 6                   # Steps (default=10)
 scan-delay: 20                  # Time delay between requests in scan threads. (default=12)
@@ -115,8 +116,8 @@ webhook-updates-only            # Only send updates to webhooks (excludes gyms &
 #version-check-interval:        # Interval to check API version in seconds (Default: in range [60, 300]).
 
 
-# Account Manager API Settings - IGNORE THIS IS CUSTOM
-######################################################
+# Account Manager API Settings - IGNORE THIS IT IS CUSTOM
+#########################################################
 
 #account-api-enabled:   # Enable Account Manager Api (true/false)
 #account-api-key:       # Account API Key (XXXXXXXXXXXXXXXX)
