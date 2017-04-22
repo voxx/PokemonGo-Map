@@ -46,6 +46,7 @@ from .utils import now, generate_device_info, clear_dict_response
 from .transform import get_new_coords, jitter_location
 from .account import check_login, get_tutorial_state, complete_tutorial
 from .captcha import captcha_overseer_thread, handle_captcha, notify_account_api
+from .stats import get_player_stats, print_account_stats
 
 from .proxy import get_new_proxy
 
@@ -96,7 +97,9 @@ def switch_status_printer(display_type, current_page, mainlog,
         elif command.lower() == 'h':
             mainlog.handlers[0].setLevel(logging.CRITICAL)
             display_type[0] = 'hashstatus'
-
+        elif command.lower() == 'a':
+            mainlog.handlers[0].setLevel(logging.CRITICAL)
+            display_type[0] = 'account_stats'
 
 # Thread to print out the status of each worker.
 def status_printer(threadStatus, search_items_queue_array, db_updates_queue,
@@ -224,6 +227,13 @@ def status_printer(threadStatus, search_items_queue_array, db_updates_queue,
                         threadStatus[item]['captcha'],
                         threadStatus[item]['message']))
 
+        elif display_type[0] == 'account_stats':
+            total_pages = print_account_stats(status_text, threadStatus,
+                                              account_queue,
+                                              account_captchas,
+                                              account_failures,
+                                              current_page)
+
         elif display_type[0] == 'failedaccounts':
             status_text.append('-----------------------------------------')
             status_text.append('Accounts on hold:')
@@ -271,9 +281,9 @@ def status_printer(threadStatus, search_items_queue_array, db_updates_queue,
         # Print the status_text for the current screen.
         status_text.append((
             'Page {}/{}. Page number to switch pages. F to show on hold ' +
-            'accounts. H to show hash status. <ENTER> alone to switch ' +
-            'between status and log view').format(current_page[0],
-                                                  total_pages))
+            'accounts. H to show hash status. A to show account stats. ' +
+            '<ENTER> alone to switch between status and log view').format(
+                            current_page[0], total_pages))
         # Clear the screen.
         os.system('cls' if os.name == 'nt' else 'clear')
         # Print status.
@@ -757,6 +767,7 @@ def search_worker_thread(args, account_queue, account_failures,
 
             status['message'] = ('Waiting to get new account from the ' +
                                  'queue...')
+            status['account'] = account
             log.info(status['message'])
 
             # Get an account.
@@ -1006,6 +1017,9 @@ def search_worker_thread(args, account_queue, account_failures,
                     log.error(status['message'])
                     time.sleep(scheduler.delay(status['last_scan_date']))
                     continue
+
+                # Update player account stats.
+                status['account'].update(get_player_stats(response_dict))
 
                 # Got the response, check for captcha, parse it out, then send
                 # todo's to db/wh queues.
