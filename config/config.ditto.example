@@ -15,7 +15,6 @@
 ###################
 
 db-type: mysql                  # sqlite (default) or mysql
-#db:                            # Database filename for SQLite. (default='pogom.db')
 #db-host:                       # Required for mysql ()
 #db-name:                       # Required for mysql
 #db-user:                       # Required for mysql
@@ -28,7 +27,7 @@ purge-data: 24                  # Clear Pokemon from database this many hours af
 # Search settings
 #################
 
-ditto                           # Enable Ditto Finder Mode (default=False)
+ditto: true                     # Enable Ditto Finder Mode (default=False)
 speed-scan                      # Use speed-scan as the search scheduler.
 step-limit: 6                   # Steps (default=10)
 scan-delay: 20                  # Time delay between requests in scan threads. (default=12)
