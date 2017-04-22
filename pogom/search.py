@@ -101,6 +101,7 @@ def switch_status_printer(display_type, current_page, mainlog,
             mainlog.handlers[0].setLevel(logging.CRITICAL)
             display_type[0] = 'account_stats'
 
+
 # Thread to print out the status of each worker.
 def status_printer(threadStatus, search_items_queue_array, db_updates_queue,
                    wh_queue, account_queue, account_failures, account_captchas,

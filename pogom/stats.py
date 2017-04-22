@@ -78,4 +78,29 @@ def print_account_stats(rows, thread_status, account_queue, account_captchas,
             account.get('poke_stop_visits', ''),
             km_walked_str))
 
-return total_pages
+    return total_pages
+
+
+# Helper function to calculate start and end line for paginated output
+def calc_pagination(total_rows, non_data_rows, current_page):
+    width, height = terminalsize.get_terminal_size()
+    # Title and table header is not usable space
+    usable_height = height - non_data_rows
+    # Prevent people running terminals only 6 lines high from getting a
+    # divide by zero.
+    if usable_height < 1:
+        usable_height = 1
+
+    total_pages = math.ceil(total_rows / float(usable_height))
+
+    # Prevent moving outside the valid range of pages.
+    if current_page[0] > total_pages:
+        current_page[0] = total_pages
+    if current_page[0] < 1:
+        current_page[0] = 1
+
+    # Calculate which lines to print (1-based).
+    start_line = usable_height * (current_page[0] - 1) + 1
+    end_line = start_line + usable_height - 1
+
+    return start_line, end_line, total_pages
