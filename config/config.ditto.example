@@ -84,12 +84,15 @@ webhook: http://127.0.0.1:4000  # Webhook URL e.g. http://127.0.0.1:12345 or a l
                                 # [http://127.0.0.1:1345,http://127.0.0.1:12346] (default=None)
 wh-threads: 2                   # Number of webhook threads; increase if the webhook queue falls behind. (default=1)
 webhook-updates-only            # Only send updates to webhooks (excludes gyms & non-lured pokéstops). (default=False)
-
+#webhook-whitelist              # List of Pokemon to send to webhooks. Specified as Pokemon ID. [env var: POGOMAP_WEBHOOK_WHITELIST]
+                                # Syntax [id,id,id,id]
+#webhook-blacklist              # List of Pokemon NOT to send to webhooks. Specified as Pokemon ID. [env var: POGOMAP_WEBHOOK_BLACKLIST]
+                                # Syntax [id,id,id,id]
 
 # Status and logs
 #################
 
-#print-status                   # Enable ENTER to switch between log view and a status view.
+print-status: status            # Enable ENTER to switch between log view and a status view.
                                 # Optionally add ": status" to start in status view and ": logs" to start in log view. (default=False)
 #status-page-password:          # Enables and protects the /status page to view status of all workers. (default=None)
 
