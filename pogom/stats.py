@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import math
+import terminalsize
+
+
 # Get player stats from response_dict
 def get_player_stats(response_dict):
     inventory_items = response_dict.get('responses', {})\
