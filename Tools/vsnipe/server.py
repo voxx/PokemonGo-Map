@@ -186,19 +186,19 @@ def get_random_account(afile):
 
     # If field 0 is not ptc or google something is wrong!
     if (fields[0].lower() == 'ptc' or fields[0].lower() == 'google'):
-        account['provider'] = fields[0])
+        account['provider'] = fields[0]
     else:
         field_error = 'method'
 
     # If field length is not longer then 0 something is wrong!
     if len(fields[1]) > 0:
-        account['username'] = fields[1])
+        account['username'] = fields[1]
     else:
         field_error = 'username'
 
     # If field length is not longer then 0 something is wrong!
     if len(fields[2]) > 0:
-        account['password'] = fields[2])
+        account['password'] = fields[2]
     else:
         field_error = 'password'
 
