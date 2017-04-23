@@ -60,7 +60,11 @@ ptc,username2,password
 ```
 
 PokeAlarm Configuration
-1) Update your alarms.json templates to include <level> and <cp> dynamic text replacements.
+1) Update your alarms.json templates to include VSnipe dynamic text replacements.
+
+```
+<level><cp>
+```
 
 ## Usage
 
