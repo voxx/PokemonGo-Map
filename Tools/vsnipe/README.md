@@ -73,7 +73,7 @@ python ./Tools/vsnipe/server.py
 You may optionally specify a custom location for the accounts using the -csv flag.
 ```sh
 cd <RocketMap Directory>
-python ./Tools/vsnipe/server.py -csv ./workers/vsnipe-accounts.csv
+python ./Tools/vsnipe/server.py -csv workers/vsnipe-accounts.csv
 ```
 
 Start PokeAlarm with the -vsnipe flag to enable updating alarms with CP and level.
