@@ -27,22 +27,14 @@ with open(vsc) as json_data_file:
 host = config['server']['host']
 port = int(config['server']['port'])
 
-#accounts = config['accounts']
-#random.shuffle(accounts)
 parser = argparse.ArgumentParser(description='Process command line input.')
 parser.add_argument('-csv', help=('Load accounts from CSV file containing ' +
                     '"auth_service,username,passwd" lines.'), default=False)
 args = parser.parse_args()
 
-csv = args.csv
-if csv:
-    account = get_random_account(csv)
-else:
-    csv = rm + 'workers/vsnipe.csv'
-    account = get_random_account(csv)
-
 hkeys = config['hash_key']
 random.shuffle(hkeys)
+
 
 def initApi(lat, lng):
     location = [float(lat), float(lng)]
@@ -59,8 +51,9 @@ def initApi(lat, lng):
 
     return api
 
+
 def login(api):
-    #account = random.choice(accounts)
+    account = load_account()
     provider = account['provider']
     username = account['username']
     password = account['password']
@@ -92,6 +85,7 @@ def login(api):
 
     return dict(data=rv)
 
+
 def map_request(api, position):
     scan_location = position
     print('Using location {} for this request.'.format(str(position)))
@@ -111,6 +105,7 @@ def map_request(api, position):
     except Exception as e:
         print('Exception while downloading map: %s', repr(e))
     return False
+
 
 def encounter(api, eid, sid, lat, lng, pid, tth):
     try:
@@ -159,6 +154,7 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
     except Exception as e:
         return e
     return False
+
 
 def get_random_account(afile):
     # Load single random line from csv file instead of loading entire file.
@@ -210,6 +206,17 @@ def get_random_account(afile):
 
     return account
 
+
+def load_account():
+    csv = args.csv
+    if csv:
+        account = get_random_account(csv)
+    else:
+        csv = rm + 'workers/vsnipe.csv'
+        account = get_random_account(csv)
+    return account
+
+
 @route('/vsnipe/', method = 'POST')
 def vsnipe():
     lat = request.forms.get('lat')
@@ -259,5 +266,6 @@ def vsnipe():
         rv = [{'error': str(e)}]
 
     return dict(data=rv)
+
 
 run(host=host, port=port, debug=True)
