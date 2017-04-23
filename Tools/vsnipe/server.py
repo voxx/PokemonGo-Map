@@ -174,7 +174,7 @@ def get_random_account(afile):
     else:
         line = line.strip()
 
-    account = []
+    account = {}
     fields = []
     field_error = ''
 
