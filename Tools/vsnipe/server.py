@@ -53,7 +53,7 @@ def initApi(lat, lng):
 
 
 def login(api):
-    account = load_account()
+    account = get_account()
     provider = account['provider']
     username = account['username']
     password = account['password']
@@ -208,13 +208,14 @@ def get_random_account(afile):
     return account
 
 
-def load_account():
+def get_account():
     csv = args.csv
     if csv:
-        account = get_random_account(csv)
+        csv_loc = rm + '/' + csv
+        account = get_random_account(csv_loc)
     else:
-        csv = rm + 'workers/vsnipe.csv'
-        account = get_random_account(csv)
+        csv_loc = rm + '/workers/vsnipe.csv'
+        account = get_random_account(csv_loc)
     return account
 
 
