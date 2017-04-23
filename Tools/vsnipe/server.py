@@ -204,7 +204,7 @@ def get_random_account(afile):
 
     # If something is wrong display error.
     if field_error != '':
-        print('Error parsing CSV on line {}. Error: {}'.format(str(num), field_error)
+        print('Error parsing CSV on line {}. Error: {}'.format(str(num), field_error))
         sys.exit(1)
 
     return account
