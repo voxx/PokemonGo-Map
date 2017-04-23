@@ -32,7 +32,7 @@ port = int(config['server']['port'])
 parser = argparse.ArgumentParser(description='Process command line input.')
 parser.add_argument('-csv', help=('Load accounts from CSV file containing ' +
                     '"auth_service,username,passwd" lines.'), default=False)
-parser.parse_args()
+args = parser.parse_args()
 
 csv = args.csv
 if csv:
