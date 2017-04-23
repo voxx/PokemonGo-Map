@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import argparse
 import json
 import os
 import random
@@ -26,8 +27,18 @@ with open(vsc) as json_data_file:
 host = config['server']['host']
 port = int(config['server']['port'])
 
-accounts = config['accounts']
-random.shuffle(accounts)
+#accounts = config['accounts']
+#random.shuffle(accounts)
+parser = argparse.ArgumentParser(description='Process command line input.')
+parser.add_argument('-csv', help=('Load accounts from CSV file containing ' +
+                    '"auth_service,username,passwd" lines.'), default=False)
+parser.parse_args()
+
+csv = args.csv
+if csv:
+    account = get_random_account(csv)
+else:
+    account = get_random_account(rm + 'workers/vsnipe.csv')
 
 hkeys = config['hash_key']
 random.shuffle(hkeys)
@@ -48,7 +59,7 @@ def initApi(lat, lng):
     return api
 
 def login(api):
-    account = random.choice(accounts)
+    #account = random.choice(accounts)
     provider = account['provider']
     username = account['username']
     password = account['password']
@@ -147,6 +158,56 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
     except Exception as e:
         return e
     return False
+
+def get_random_account(afile):
+    # Load single random line from csv file instead of loading entire file.
+    line = next(afile)
+    for num, aline in enumerate(afile):
+        if random.randrange(num + 2): continue
+        line = aline
+
+    # Count fields contained in line.
+    num_fields = line.count(',') + 1
+
+    # If the number of fields is not 3 this is not a valid CSV entry.
+    if num_fields != 3:
+        print('Error parsing CSV file on line: {}'.format(str(num)))
+        sys.exit(1)
+    else:
+        line = line.strip()
+
+    account = []
+    fields = []
+    field_error = ''
+
+    # Get individual values from line and cleanup.
+    fields = line.split(",")
+    fields = map(str.strip, fields)
+
+    # If field 0 is not ptc or google something is wrong!
+    if (fields[0].lower() == 'ptc' or fields[0].lower() == 'google'):
+        account['provider'] = fields[0])
+    else:
+        field_error = 'method'
+
+    # If field length is not longer then 0 something is wrong!
+    if len(fields[1]) > 0:
+        account['username'] = fields[1])
+    else:
+        field_error = 'username'
+
+    # If field length is not longer then 0 something is wrong!
+    if len(fields[2]) > 0:
+        account['password'] = fields[2])
+    else:
+        field_error = 'password'
+
+    # If something is wrong display error.
+    if field_error != '':
+        print('Error parsing CSV on line {}. Error: {}'.format(str(num), field_error)
+        sys.exit(1)
+
+    return account
 
 @route('/vsnipe/', method = 'POST')
 def vsnipe():
