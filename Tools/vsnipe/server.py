@@ -157,11 +157,12 @@ def encounter(api, eid, sid, lat, lng, pid, tth):
 
 
 def get_random_account(afile):
-    # Load single random line from csv file instead of loading entire file.
-    line = next(afile)
-    for num, aline in enumerate(afile):
-        if random.randrange(num + 2): continue
-        line = aline
+    # Load single random line from csv file.
+    with open(afile) as f:
+        line = next(f).strip()
+        for num, aline in enumerate(f):
+            if random.randrange(num + 2): continue
+            line = aline
 
     # Count fields contained in line.
     num_fields = line.count(',') + 1
