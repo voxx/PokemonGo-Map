@@ -38,7 +38,8 @@ csv = args.csv
 if csv:
     account = get_random_account(csv)
 else:
-    account = get_random_account(rm + 'workers/vsnipe.csv')
+    csv = rm + 'workers/vsnipe.csv'
+    account = get_random_account(csv)
 
 hkeys = config['hash_key']
 random.shuffle(hkeys)
