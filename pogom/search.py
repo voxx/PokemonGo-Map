@@ -46,7 +46,7 @@ from .utils import now, generate_device_info, clear_dict_response
 from .transform import get_new_coords, jitter_location
 from .account import check_login, get_tutorial_state, complete_tutorial
 from .captcha import captcha_overseer_thread, handle_captcha, notify_account_api
-from .stats import get_player_stats, print_account_stats
+from .stats import get_player_stats, print_account_stats, get_player_warning
 
 from .proxy import get_new_proxy
 
@@ -976,6 +976,11 @@ def search_worker_thread(args, account_queue, account_failures,
                 # check_login().
                 if first_login:
                     first_login = False
+
+                    warn_status = get_player_warning(api)
+                    account.warn_status = warn_status
+                    log.info('Account %s bot activity warning status ' +
+                             'is: %s', account['username'], warn_status)
                 else:
                     # Check for level up rewards once per login if using -ditto
                     # Flag checked on first map_request

@@ -47,9 +47,9 @@ def print_account_stats(rows, thread_status, account_queue, account_captchas,
 
     # Print table header.
     row_tmpl = '{:7} | {:' + str(userlen) + '} | {:5} | {:>8} | {:10} | {:6}' \
-               ' | {:8} | {:5} | {:>10}'
+               ' | {:8} | {:5} | {:>10} | {:8}'
     rows.append(row_tmpl.format('Status', 'User', 'Level', 'XP', 'Encounters',
-                                'Throws', 'Captures', 'Spins', 'Walked'))
+                                'Throws', 'Captures', 'Spins', 'Walked', 'Warning'))
 
     # Pagination.
     start_line, end_line, total_pages = calc_pagination(len(accounts), 6, current_page)
@@ -80,7 +80,8 @@ def print_account_stats(rows, thread_status, account_queue, account_captchas,
             account.get('pokeballs_thrown', ''),
             account.get('pokemons_captured', ''),
             account.get('poke_stop_visits', ''),
-            km_walked_str))
+            km_walked_str,
+            account.get('warn_status', '')))
 
     return total_pages
 
@@ -108,3 +109,26 @@ def calc_pagination(total_rows, non_data_rows, current_page):
     end_line = start_line + usable_height - 1
 
     return start_line, end_line, total_pages
+
+
+def get_player_warning(api):
+    time.sleep(random.uniform(1, 3))
+    try:
+        req = api.create_request()
+        req.get_player(
+            player_locale={
+                'country': 'US',
+                'language': 'en',
+                'timezone': 'America/Los_Angeles'})
+        req.check_challenge()
+        response = req.call().get('responses', {})
+
+        get_player = response.get('GET_PLAYER', {})
+        warn_state = get_player.get('warn', False)
+
+        return warn_state
+
+    except Exception as e:
+        log.warning('Exception while getting player warning state: %s', repr(e))
+
+    return False
