@@ -130,6 +130,7 @@ def get_player_warning(api):
 
         get_player = response.get('GET_PLAYER', {})
         warn_state = get_player.get('warn', False)
+        time.sleep(random.uniform(1, 3))
 
         return warn_state
 
