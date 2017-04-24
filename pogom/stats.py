@@ -52,7 +52,7 @@ def print_account_stats(rows, thread_status, account_queue, account_captchas,
 
     # Print table header.
     row_tmpl = '{:7} | {:' + str(userlen) + '} | {:5} | {:>8} | {:10} | {:6}' \
-               ' | {:8} | {:5} | {:>10} | {:7}'
+               ' | {:8} | {:5} | {:>10} | {:>7} |'
     rows.append(row_tmpl.format('Status', 'User', 'Level', 'XP', 'Encounters',
                                 'Throws', 'Captures', 'Spins', 'Walked', 'Warning'))
 
