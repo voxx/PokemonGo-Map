@@ -978,7 +978,7 @@ def search_worker_thread(args, account_queue, account_failures,
                     first_login = False
 
                     warn_status = get_player_warning(api)
-                    account['warn_status'] = warn_status
+                    account['warn_status'] = str(warn_status)
                     log.info('Account %s bot activity warning status ' +
                              'is: %s', account['username'], warn_status)
                 else:
