@@ -1,8 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import logging
 import math
+import random
 import terminalsize
+import time
+
+log = logging.getLogger(__name__)
 
 
 # Get player stats from response_dict
